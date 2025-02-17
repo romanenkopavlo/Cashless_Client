@@ -16,4 +16,25 @@ export const ValidationConnexion = {
                     "Le Login doit  contenir entre 3 et 20 caractères, ne peut inclure que des lettres, chiffres, points, tirets bas ou tirets.",
             },
     },
+    surname: {
+        required: "Nom obligatoire",
+        pattern: {
+            value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]{1,45}$/,
+            message: "Le Nom ne peut contenir que des lettres et des tirets (max 45 caractères).",
+        },
+    },
+    name: {
+        required: "Prénom obligatoire",
+        pattern: {
+            value: /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]{1,45}$/,
+            message: "Le Prénom ne peut contenir que des lettres et des tirets (max 45 caractères).",
+        },
+    },
+    cardNumber: {
+        required: "Numéro de la carte obligatoire",
+        pattern: {
+            value: /^\d{16}$/,
+            message: "Le Numéro de la carte doit contenir exactement 16 chiffres.",
+        },
+    },
 }

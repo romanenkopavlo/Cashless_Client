@@ -1,9 +1,7 @@
+import {Inscription} from "../components/formulaires/Inscription.tsx";
+
 export const Signup = () => {
     return (
-        <>
-            <div className="wrapper-main">
-
-            </div>
-        </>
+        <Inscription/>
     )
 }

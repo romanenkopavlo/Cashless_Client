@@ -1,14 +1,13 @@
 import parameters from "../../../public/parameters.json";
-import Token from "../../models/users/Token.ts";
 import axios, {AxiosError} from "axios";
 
 const URL_SERVER = parameters.URL_SERVER
-const URL_AUTH = parameters.URL_AUTH
+const URL_SIGNUP = parameters.URL_SIGNUP
 
-export const TokenJWT = async(username: string, password: string): Promise<Token | null> => {
+export const CreateAccount = async(name: string, surname: string, login: string, password: string, cardNumber: string) => {
     try {
-        const response = await axios.post<Token>(`${URL_SERVER}${URL_AUTH}`, {username, password}, {withCredentials: true});
-        console.log(`response.data de requette TokenLWT ${response.data.token}`)
+        const response = await axios.post(`${URL_SERVER}${URL_SIGNUP}`, {name, surname, login, password, cardNumber}, {withCredentials: true});
+        console.log(response.data)
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
