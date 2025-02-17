@@ -4,7 +4,6 @@ import {Link} from "react-router";
 import {Box, Button, Container, Typography} from "@mui/material";
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
-import {UnloadLogout} from "../utils/UnloadLogout.ts";
 import {AddCardForm} from "../components/formulaires/AddCard.tsx"
 import {useCardStore} from "../store/useCardStore.ts";
 
@@ -12,8 +11,6 @@ export const Profile = () => {
     const {accessToken} = useAuthenticationJWTStore()
     const {card} = useCardStore()
     const user = getDecodedToken(accessToken?.token)
-
-    UnloadLogout()
 
     return (
         <>
