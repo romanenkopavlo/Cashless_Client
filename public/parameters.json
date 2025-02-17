@@ -1,0 +1,9 @@
+{
+  "URL_SERVER": "http://localhost:5000",
+  "URL_AUTH": "/api/auth/login",
+  "URL_REFRESH_TOKEN": "/api/auth/refreshToken",
+  "URL_CHECK_AUTH": "/api/auth/checkAuth",
+  "URL_LOGOUT": "/api/auth/logout",
+  "URL_BALANCE": "/api/auth/verifyBalance",
+  "URL_ADD_CARD": "/api/auth/addCard"
+}
