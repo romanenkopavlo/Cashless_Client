@@ -10,6 +10,9 @@ export const Logout = () => {
         Disconnect().then(() => {
             console.log("Redirecting to login...")
             useAuthenticationJWTStore.getState().setAccessToken(new Token(null))
+            if (sessionStorage.getItem("isPageRefreshing")) {
+                sessionStorage.removeItem("isPageRefreshing");
+            }
         })
         navigate("/login", {replace: true})
     })
