@@ -1,12 +1,11 @@
-import './Connexion.css'
-import {FaLock, FaUser} from "react-icons/fa"
+import './Connexion.css';
+import {FaLock, FaUser} from "react-icons/fa";
 import {Box, Container, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
-import {ServerCheckOnline} from "../../services_REST/serveur/ServerCheckOnline.ts";
+import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useNavigate} from "react-router";
+import {useLocation, useNavigate} from "react-router";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
-import {TokenJWT} from "../../services_REST/serveur/TokenJWT.ts";
+import {Login} from "../../services_REST/serveur/Login.ts";
 import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
 
 interface FormData {
@@ -15,14 +14,15 @@ interface FormData {
 }
 
 export const Connexion = () => {
-    const [message, setMessage] = useState<string>('Connexion...')
     const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
     const navigate = useNavigate()
     const {setAccessToken} = useAuthenticationJWTStore()
+    const location = useLocation();
+    const successMessage = location.state?.successMessage || '';
 
     const onSubmit:SubmitHandler<FormData>=data => {
-        TokenJWT(data.login, data.password)
+        Login(data.login, data.password)
             .then(token => {
                 if (token != null) {
                     setAccessToken(token)
@@ -35,31 +35,6 @@ export const Connexion = () => {
                 setErrorMessage(error.message)
             })
         console.log(data)
-    }
-
-    useEffect(() => {
-        const repeat = setInterval(() => {
-            ServerCheckOnline()
-                .then((state: boolean) => {
-                    if(state) {
-                        setMessage(`⚙️ Serveur distant fonctionnel`)
-                    } else {
-                        setMessage(`⛓️‍💥 Le serveur distant ne répond pas. Veuillez vous reconnecter plus tard!`)
-                    }
-                })
-        }, 3500)
-
-        return() => clearInterval(repeat)
-
-    }, [])
-
-    const setMessageColor = (message: string) => {
-        if (message.includes(`⚙️`)) {
-            return 'success'
-        } else if (message.includes(`⛓️‍💥`)) {
-            return 'error'
-        }
-        return 'text.secondary'
     }
 
     return (
@@ -88,9 +63,9 @@ export const Connexion = () => {
                             </Typography>
                         </Container>}
                         <div className="register-link">
-                            <p>Vous n'avez pas encore de compte? <a href="#">S'inscrire</a></p>
+                            <p>Vous n'avez pas encore de compte? <a href="/signup">S'inscrire</a></p>
                         </div>
-                        <Container maxWidth="sm" sx={{mt: 5}}>
+                        {successMessage && (<Container maxWidth="sm" sx={{mt: 5}}>
                             <Box
                                 sx = {
                                     {
@@ -103,12 +78,13 @@ export const Connexion = () => {
                                 <Typography
                                     variant="subtitle1"
                                     sx={{fontWeight: 'bold'}}
-                                    color={setMessageColor(message)}
+                                    color='success'
+                                    textAlign='center'
                                 >
-                                    {message}
+                                    {successMessage}
                                 </Typography>
                             </Box>
-                        </Container>
+                        </Container>)}
                     </form>
                 </div>
             </div>
