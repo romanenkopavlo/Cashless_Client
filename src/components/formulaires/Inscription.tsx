@@ -58,7 +58,7 @@ export const Inscription = () => {
                             {errors.login && <p className="error-message">{errors.login.message}</p>}
                         </div>
                         <div className={`input-box ${errors.login ? "input-box-error" : ""}`}>
-                            <input {...register("cardNumber", ValidationConnexion.cardNumber)} type="text" className={errors.cardNumber ? "input-error" : ""} placeholder="Numéro de la carte"/>
+                            <input {...register("cardNumber", ValidationConnexion.cardNumber)} type="text" className={errors.cardNumber ? "input-error" : ""} placeholder="Numéro de la carte" required={false}/>
                             <FaCreditCard className="icon"/>
                             {errors.cardNumber && <p className="error-message">{errors.cardNumber.message}</p>}
                         </div>

@@ -31,7 +31,6 @@ export const ValidationConnexion = {
         },
     },
     cardNumber: {
-        required: "Numéro de la carte obligatoire",
         pattern: {
             value: /^\d{16}$/,
             message: "Le Numéro de la carte doit contenir exactement 16 chiffres.",

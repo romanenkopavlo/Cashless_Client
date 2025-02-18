@@ -17,14 +17,17 @@ export const Connexion = () => {
     const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
     const navigate = useNavigate()
-    const {setAccessToken} = useAuthenticationJWTStore()
+    const {accessToken, setAccessToken} = useAuthenticationJWTStore()
     const location = useLocation();
     const successMessage = location.state?.successMessage || '';
+
+    console.log("access token est égal à " + accessToken?.token)
 
     const onSubmit:SubmitHandler<FormData>=data => {
         Login(data.login, data.password)
             .then(token => {
                 if (token != null) {
+                    console.log("token recu de la part de serveur: " + token)
                     setAccessToken(token)
                     navigate('/profile');
                 }

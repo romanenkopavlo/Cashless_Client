@@ -18,12 +18,12 @@ const router = createBrowserRouter(([
             {path: "/", element: <Home/>},
             {path: "/login", element: <UserLogin/>},
             {path: "/signup", element: <Signup/>},
-            {path: "/logout", element: <Logout/>},
             {
                 element: <PrivateRoute/>,
                 children: [
                     {path: "/profile", element: <Profile/>},
-                    {path: "/checkBalance", element: <BalanceCheck/>}
+                    {path: "/checkBalance", element: <BalanceCheck/>},
+                    {path: "/logout", element: <Logout/>},
                 ]
             }
         ]
