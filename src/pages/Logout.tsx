@@ -13,6 +13,7 @@ export const Logout = () => {
             if (sessionStorage.getItem("isPageRefreshing")) {
                 sessionStorage.removeItem("isPageRefreshing");
             }
+
         })
         navigate("/login", {replace: true})
     })
