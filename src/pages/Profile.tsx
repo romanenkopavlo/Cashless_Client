@@ -6,7 +6,6 @@ import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
 import {AddCardForm} from "../components/formulaires/AddCard.tsx"
 import {useCardStore} from "../store/useCardStore.ts";
-import {UnloadLogout} from "../utils/UnloadLogout.tsx";
 
 export const Profile = () => {
     const {accessToken} = useAuthenticationJWTStore()

@@ -17,11 +17,10 @@ export const UnloadLogout = () => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, []);
+    });
 
     useEffect(() => {
         const isRefreshing = sessionStorage.getItem("isPageRefreshing");
-
         if (isRefreshing) {
             sessionStorage.removeItem("isPageRefreshing");
 
