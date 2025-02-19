@@ -33,7 +33,7 @@ export const AxiosJwt = () => {
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
-            if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            if (error.response && error.response.status === 403 && !originalRequest._retry) {
                 originalRequest._retry = true;
                 try {
                     const response = await axios.get(`${URL_SERVER}${URL_AUTH_REFRESH}`,{
@@ -50,6 +50,7 @@ export const AxiosJwt = () => {
                 } catch (e) {
                     if (axios.isAxiosError(e) && e.response?.status === 504) {
                         console.error("Erreur 504 détectée, redirection...");
+                        alert("Votre session a expiré. Veuillez vous reconnecter.");
                         useAuthenticationJWTStore.getState().setAccessToken(new Token(null));
                         window.location.href = '/login';
                     } else {

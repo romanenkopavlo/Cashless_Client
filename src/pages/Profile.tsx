@@ -1,21 +1,36 @@
 import {Header} from "../components/Header.tsx";
 import {Footer} from "../components/Footer.tsx";
 import {Link} from "react-router";
-import {Box, Button, Container, Typography} from "@mui/material";
+import {Alert, Box, Button, Container, Typography} from "@mui/material";
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
-import {getDecodedToken} from "../utils/TokenDecodage.ts";
 import {AddCardForm} from "../components/formulaires/AddCard.tsx"
+import {getDecodedToken} from "../utils/TokenDecodage.ts";
 import {useCardStore} from "../store/useCardStore.ts";
+import {useEffect, useState} from "react";
 
 export const Profile = () => {
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const {accessToken} = useAuthenticationJWTStore()
-    const {card} = useCardStore()
+    const {card} = useCardStore();
     const user = getDecodedToken(accessToken?.token)
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => setSuccessMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
 
     return (
         <>
             <Header/>
             <Container maxWidth="xs" sx={{mt: 3}}>
+                {successMessage && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                        {successMessage}
+                    </Alert>
+                )}
+
                 <Box
                     sx = {
                         {
@@ -35,6 +50,18 @@ export const Profile = () => {
                         variant="subtitle1"
                         sx={{fontWeight: 'bold', textAlign: 'left'}}
                     >
+                        Nom: {user?.nom}
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{fontWeight: 'bold', textAlign: 'left'}}
+                    >
+                        Prenom: {user?.prenom}
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{fontWeight: 'bold', textAlign: 'left'}}
+                    >
                         Username: {user?.username}
                     </Typography>
                     <Typography
@@ -43,12 +70,12 @@ export const Profile = () => {
                     >
                         Role: {user?.role}
                     </Typography>
-                    {card &&
+                    {card && card.numero &&
                         <Typography
                             sx={{fontWeight: 'bold', textAlign: 'left'}}>
                             Numéro de la carte: {card.numero}
                         </Typography>}
-                    {card &&
+                    {card && card.montant &&
                         <Typography
                             sx={{fontWeight: 'bold', textAlign: 'left'}}>
                             Solde: {card.montant}€
@@ -63,7 +90,7 @@ export const Profile = () => {
                     </Box>
                 </Box>
                 {!card?.numero && !card?.montant &&
-                    <AddCardForm/>}
+                    <AddCardForm setSuccessMessage={setSuccessMessage}/>}
             </Container>
             <Footer/>
         </>

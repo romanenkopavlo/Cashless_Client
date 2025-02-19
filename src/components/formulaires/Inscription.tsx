@@ -43,17 +43,17 @@ export const Inscription = () => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <h1>Inscription</h1>
                         <div className="input-box">
-                            <input {...register("surname", ValidationConnexion.surname)} type="text" className={errors.surname ? "input-error" : ""} placeholder="Nom" required/>
+                            <input {...register("surname", ValidationConnexion.surname)} type="text" className={errors.surname ? "input-error" : ""} placeholder="Nom ⃰" required/>
                             <FaUser className="icon"/>
                             {errors.surname && <p className="error-message">{errors.surname.message}</p>}
                         </div>
                         <div className={`input-box ${errors.surname ? "input-box-error" : ""}`}>
-                            <input {...register("name", ValidationConnexion.name)} type="text" className={errors.name ? "input-error" : ""} placeholder="Prénom" required/>
+                            <input {...register("name", ValidationConnexion.name)} type="text" className={errors.name ? "input-error" : ""} placeholder="Prénom ⃰" required/>
                             <FaUser className="icon"/>
                             {errors.name && <p className="error-message">{errors.name.message}</p>}
                         </div>
                         <div className={`input-box ${errors.name ? "input-box-error" : ""}`}>
-                            <input {...register("login", ValidationConnexion.login)} type="text" className={errors.login ? "input-error" : ""} placeholder="Pseudo" required/>
+                            <input {...register("login", ValidationConnexion.login)} type="text" className={errors.login ? "input-error" : ""} placeholder="Pseudo ⃰" required/>
                             <FaUserTag className="icon"/>
                             {errors.login && <p className="error-message">{errors.login.message}</p>}
                         </div>
@@ -63,7 +63,7 @@ export const Inscription = () => {
                             {errors.cardNumber && <p className="error-message">{errors.cardNumber.message}</p>}
                         </div>
                         <div className={`input-box ${errors.cardNumber ? "input-box-error" : ""}`}>
-                            <input {...register("password", ValidationConnexion.password)} type="password" className={errors.password ? "input-error" : ""} placeholder="Mot de passe" required/>
+                            <input {...register("password", ValidationConnexion.password)} type="password" className={errors.password ? "input-error" : ""} placeholder="Mot de passe ⃰" required/>
                             <FaLock className="icon"/>
                             {errors.password && <p className="error-message">{errors.password.message}</p>}
                         </div>

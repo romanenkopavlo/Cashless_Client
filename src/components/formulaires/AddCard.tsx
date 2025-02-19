@@ -10,7 +10,11 @@ interface FormData {
     cardNumber: number
 }
 
-export const AddCardForm = () => {
+interface AddCardFormProps {
+    setSuccessMessage: (message: string | null) => void;
+}
+
+export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
     const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
     const {setCard} = useCardStore()
@@ -23,6 +27,7 @@ export const AddCardForm = () => {
                     console.log(card)
                     console.log("Balance: " + card.montant)
                     console.log("Number: " + card.numero)
+                    setSuccessMessage("Carte ajoutée avec succès !");
                 }
             })
             .catch (error => {
