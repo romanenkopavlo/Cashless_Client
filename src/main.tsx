@@ -8,7 +8,7 @@ import {Profile} from "./pages/Profile.tsx";
 import {Signup} from "./pages/Signup.tsx";
 import {Logout} from "./pages/Logout.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
-import {BalanceCheck} from "./pages/BalanceCheck.tsx";
+import {HistoriqueTransaction} from "./pages/HistoriqueTransaction.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -22,7 +22,7 @@ const router = createBrowserRouter(([
                 element: <PrivateRoute/>,
                 children: [
                     {path: "/profile", element: <Profile/>},
-                    {path: "/checkBalance", element: <BalanceCheck/>},
+                    {path: "/transaction-history", element: <HistoriqueTransaction/>},
                     {path: "/logout", element: <Logout/>},
                 ]
             }

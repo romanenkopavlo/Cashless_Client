@@ -80,14 +80,15 @@ export const Profile = () => {
                             sx={{fontWeight: 'bold', textAlign: 'left'}}>
                             Solde: {card.montant}€
                         </Typography>}
-
-                    <Box sx={{mt: 2, textAlign: "center"}}>
-                        <Link to="/transaction-history" style={{textDecoration: "none"}}>
-                            <Button color="inherit" className="cta-button">
-                                Voir l'historique des transactions
-                            </Button>
-                        </Link>
-                    </Box>
+                    {card?.numero && card?.montant &&
+                        <Box sx={{mt: 2, textAlign: "center"}}>
+                            <Link to="/transaction-history" style={{textDecoration: "none"}}>
+                                <Button color="inherit" className="cta-button">
+                                    Voir l'historique des transactions
+                                </Button>
+                            </Link>
+                        </Box>
+                    }
                 </Box>
                 {!card?.numero && !card?.montant &&
                     <AddCardForm setSuccessMessage={setSuccessMessage}/>}

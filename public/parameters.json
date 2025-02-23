@@ -7,5 +7,6 @@
   "URL_BALANCE": "/api/auth/verifyBalance",
   "URL_ADD_CARD": "/api/auth/addCard",
   "URL_GET_CARD_DATA": "/api/auth/getCardData",
+  "URL_GET_TRANSACTIONS": "/api/auth/getTransactions",
   "URL_SIGNUP": "/api/auth/signup"
 }

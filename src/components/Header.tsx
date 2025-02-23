@@ -48,25 +48,6 @@ export const Header = () => {
                             </Link>
                         </div>
                     )}
-                        {/*<Link to ="/logout">*/}
-                        {/*    <Button color="inherit" className="cta-button">*/}
-                        {/*        Déconnexion*/}
-                        {/*    </Button>*/}
-                        {/*</Link>*/}
-
-                        {/*<div className="header-buttons">*/}
-                        {/*    <Link to="/login">*/}
-                        {/*        <Button color="inherit" className="cta-button">*/}
-                        {/*            Se connecter*/}
-                        {/*        </Button>*/}
-                        {/*    </Link>*/}
-                        {/*    <Link to="/signup">*/}
-                        {/*        <Button color="inherit" className="cta-button">*/}
-                        {/*            S'inscrire*/}
-                        {/*        </Button>*/}
-                        {/*    </Link>*/}
-                        {/*</div>*/}
-
                 </Container>
             </Toolbar>
         </AppBar>
