@@ -65,7 +65,7 @@ export const HistoriqueTransaction = () => {
                         <TableBody>
                             {transactions ? (
                                 transactions.map((transaction) => (
-                                    <TableRow key={transaction.idtransaction}>
+                                    <TableRow key={transaction.id_transaction}>
                                         <TableCell align="center">{new Date(transaction.date).toLocaleString()}</TableCell>
                                         <TableCell align="center"
                                                    sx={{color: transaction.type === "Crédit" ? "green" : "red"}}>

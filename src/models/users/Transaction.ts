@@ -1,12 +1,12 @@
 export default class Transaction {
-    idtransaction: number;
+    id_transaction: number;
     date: string;
     montant_transaction: number;
     type: string;
     nom_stand: string;
 
     constructor(idtransaction: number, date: string, montant_transaction: number, type: string, nom_stand: string) {
-        this.idtransaction = idtransaction;
+        this.id_transaction = idtransaction;
         this.date = date;
         this.montant_transaction = montant_transaction;
         this.type = type;

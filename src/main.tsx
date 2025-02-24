@@ -9,6 +9,8 @@ import {Signup} from "./pages/Signup.tsx";
 import {Logout} from "./pages/Logout.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
 import {HistoriqueTransaction} from "./pages/HistoriqueTransaction.tsx";
+import {GestionStands} from "./pages/administration/GestionStands.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -24,6 +26,12 @@ const router = createBrowserRouter(([
                     {path: "/profile", element: <Profile/>},
                     {path: "/transaction-history", element: <HistoriqueTransaction/>},
                     {path: "/logout", element: <Logout/>},
+                ]
+            },
+            {
+                element: <AdminRoute/>,
+                children: [
+                    {path: "/manage-stands", element: <GestionStands/>}
                 ]
             }
         ]
