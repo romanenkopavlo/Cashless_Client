@@ -1,8 +1,8 @@
 import {useNavigate} from "react-router";
 import {useEffect} from "react";
-import {Disconnect} from "../services_REST/serveur/Disconnect.ts";
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
-import Token from "../models/users/Token.ts";
+import {Disconnect} from "../../services_REST/serveur/connection/Disconnect.ts";
+import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
+import Token from "../../models/Token.ts";
 
 export const Logout = () => {
     const navigate = useNavigate();

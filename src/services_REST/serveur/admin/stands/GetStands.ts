@@ -1,5 +1,5 @@
-import {AxiosJwt} from "../../utils/Axios-JWT.ts";
-import parameters from "../../../public/parameters.json";
+import {AxiosJwt} from "../../../../utils/Axios-JWT.ts";
+import parameters from "../../../../../public/parameters.json";
 import {AxiosError} from "axios";
 
 const URL_GET_STANDS = parameters.URL_GET_STANDS

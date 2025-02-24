@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Disconnect } from "../services_REST/serveur/Disconnect.ts";
+import { Disconnect } from "../services_REST/serveur/connection/Disconnect.ts";
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
 
 export const UnloadLogout = () => {

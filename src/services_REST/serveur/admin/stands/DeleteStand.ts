@@ -1,6 +1,6 @@
-import parameters from "../../../public/parameters.json";
+import parameters from "../../../../../public/parameters.json";
 import {AxiosError} from "axios";
-import {AxiosJwt} from "../../utils/Axios-JWT.ts";
+import {AxiosJwt} from "../../../../utils/Axios-JWT.ts";
 
 
 const URL_DELETE_STAND = parameters.URL_DELETE_STAND;

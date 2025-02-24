@@ -1,5 +1,5 @@
 import {jwtDecode} from "jwt-decode";
-import User from "../models/users/User.ts";
+import User from "../models/User.ts";
 
 export const getDecodedToken = (token: string | null | undefined): User | null => {
     if (!token) {

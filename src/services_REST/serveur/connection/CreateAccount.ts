@@ -1,4 +1,4 @@
-import parameters from "../../../public/parameters.json";
+import parameters from "../../../../public/parameters.json";
 import axios, {AxiosError} from "axios";
 
 const URL_SERVER = parameters.URL_SERVER

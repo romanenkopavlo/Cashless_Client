@@ -17,12 +17,12 @@ import {
     DialogTitle, Typography
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import Stand from "../../models/users/Stand.ts";
+import Stand from "../../models/Stand.ts";
 import * as React from "react";
-import {GetStands} from "../../services_REST/serveur/GetStands.ts";
-import {CreateStand} from "../../services_REST/serveur/CreateStand.ts";
-import {UpdateStand} from "../../services_REST/serveur/UpdateStand.ts";
-import {DeleteStand} from "../../services_REST/serveur/DeleteStand.ts";
+import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
+import {CreateStand} from "../../services_REST/serveur/admin/stands/CreateStand.ts";
+import {UpdateStand} from "../../services_REST/serveur/admin/stands/UpdateStand.ts";
+import {DeleteStand} from "../../services_REST/serveur/admin/stands/DeleteStand.ts";
 
 export const GestionStands = () => {
     const [stands, setStands] = useState<Stand[]>([]);
@@ -106,10 +106,6 @@ export const GestionStands = () => {
             return;
         }
 
-        setNomError(null);
-        setCategorieError(null);
-        setSoldeError(null);
-
         if (isEditing) {
             UpdateStand(formData.id_stand, formData.nom_stand, formData.solde, formData.nom_categorie)
                 .then((data) => {
@@ -155,6 +151,9 @@ export const GestionStands = () => {
         <>
             <Header />
             <div style={{ padding: "20px", textAlign: "center" }}>
+                <Typography variant="h5" sx={{ mt: 1 }}>
+                    Gestion des stands
+                </Typography>
                 <Button variant="contained" onClick={() => handleOpen(false)} style={{ marginTop: "20px", backgroundColor: "#7f5656" }}>
                     Ajouter un stand
                 </Button>

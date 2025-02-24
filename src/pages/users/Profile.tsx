@@ -1,11 +1,11 @@
-import {Header} from "../components/Header.tsx";
-import {Footer} from "../components/Footer.tsx";
+import {Header} from "../../components/Header.tsx";
+import {Footer} from "../../components/Footer.tsx";
 import {Link} from "react-router";
 import {Alert, Box, Button, Container, Typography} from "@mui/material";
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
-import {AddCardForm} from "../components/formulaires/AddCard.tsx"
-import {getDecodedToken} from "../utils/TokenDecodage.ts";
-import {useCardStore} from "../store/useCardStore.ts";
+import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
+import {AddCardForm} from "../../components/formulaires/AddCard.tsx"
+import {getDecodedToken} from "../../utils/TokenDecodage.ts";
+import {useCardStore} from "../../store/CardStore.ts";
 import {useEffect, useState} from "react";
 
 export const Profile = () => {

@@ -5,7 +5,7 @@ import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
 import { useNavigate } from 'react-router';
-import {CreateAccount} from "../../services_REST/serveur/CreateAccount.ts";
+import {CreateAccount} from "../../services_REST/serveur/connection/CreateAccount.ts";
 
 interface FormData {
     name: string

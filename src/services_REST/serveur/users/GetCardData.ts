@@ -1,6 +1,6 @@
-import parameters from "../../../public/parameters.json";
-import Card from "../../models/users/Card.ts";
-import {AxiosJwt} from "../../utils/Axios-JWT.ts";
+import parameters from "../../../../public/parameters.json";
+import Card from "../../../models/Card.ts";
+import {AxiosJwt} from "../../../utils/Axios-JWT.ts";
 import {AxiosError} from "axios";
 
 const URL_GET_CARD_DATA = parameters.URL_GET_CARD_DATA

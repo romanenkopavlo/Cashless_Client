@@ -7,7 +7,11 @@ import './Header.css';
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
 import {useState} from "react";
 import * as React from "react";
-import {CreditCard, People, Storefront} from "@mui/icons-material";
+import {
+    CreditCard,
+    Groups,
+    Storefront
+} from "@mui/icons-material";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
 
 export const Header = () => {
@@ -67,7 +71,8 @@ export const Header = () => {
                                     >
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-cards" sx={menuItemStyle}><CreditCard sx={{ marginRight: '10px' }} /> Gestion des cartes</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-stands" sx={menuItemStyle}><Storefront sx={{ marginRight: '10px' }} /> Gestion des stands</MenuItem>
-                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-users" sx={menuItemStyle}><People sx={{ marginRight: '10px' }} /> Gestion des utilisateurs</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-festivaliers" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des festivaliers</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-benevoles" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des bénévoles</MenuItem>
                                     </Menu>
                                 </>}
                             <Link to="/profile">

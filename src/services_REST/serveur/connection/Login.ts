@@ -1,5 +1,5 @@
-import parameters from "../../../public/parameters.json";
-import Token from "../../models/users/Token.ts";
+import parameters from "../../../../public/parameters.json";
+import Token from "../../../models/Token.ts";
 import axios, {AxiosError} from "axios";
 
 const URL_SERVER = parameters.URL_SERVER

@@ -1,5 +1,5 @@
-import {Header} from "../components/Header.tsx";
-import {Footer} from "../components/Footer.tsx";
+import {Header} from "../../components/Header.tsx";
+import {Footer} from "../../components/Footer.tsx";
 import {
     Container,
     Paper,
@@ -12,10 +12,10 @@ import {
     Typography
 } from "@mui/material";
 import {useEffect, useState} from "react";
-import {useCardStore} from "../store/useCardStore.ts";
-import {GetTransactions} from "../services_REST/serveur/GetTransactions.ts";
+import {useCardStore} from "../../store/CardStore.ts";
+import {GetTransactions} from "../../services_REST/serveur/users/GetTransactions.ts";
 import {ArrowDownward, ArrowUpward} from "@mui/icons-material";
-import Transaction from "../models/users/Transaction.ts";
+import Transaction from "../../models/Transaction.ts";
 
 export const HistoriqueTransaction = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);

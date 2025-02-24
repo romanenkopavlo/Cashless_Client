@@ -1,7 +1,7 @@
 import axios from "axios";
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
 import parameters from "../../public/parameters.json";
-import Token from "../models/users/Token.ts";
+import Token from "../models/Token.ts";
 
 const URL_SERVER = parameters.URL_SERVER
 const URL_AUTH_REFRESH = parameters.URL_REFRESH_TOKEN

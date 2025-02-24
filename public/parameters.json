@@ -12,5 +12,9 @@
   "URL_GET_STANDS": "/api/admin/stands/getStands",
   "URL_CREATE_STAND": "/api/admin/stands/createStand",
   "URL_UPDATE_STAND": "/api/admin/stands/updateStand",
-  "URL_DELETE_STAND": "/api/admin/stands/deleteStand"
+  "URL_DELETE_STAND": "/api/admin/stands/deleteStand",
+  "URL_GET_FESTIVALIERS": "/api/admin/festivaliers/getFestivaliers",
+  "URL_CREATE_FESTIVALIER": "/api/admin/festivaliers/createFestivalier",
+  "URL_UPDATE_FESTIVALIER": "/api/admin/festivaliers/updateFestivalier",
+  "URL_DELETE_FESTIVALIER": "/api/admin/festivaliers/deleteFestivalier"
 }

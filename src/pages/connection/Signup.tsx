@@ -1,4 +1,4 @@
-import {Inscription} from "../components/formulaires/Inscription.tsx";
+import {Inscription} from "../../components/formulaires/Inscription.tsx";
 
 export const Signup = () => {
     return (
