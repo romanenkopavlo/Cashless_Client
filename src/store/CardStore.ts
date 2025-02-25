@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import Card from "../models/users/Card.ts";
+import Card from "../models/Card.ts";
 
 interface InterfaceCardStore {
     card: Card | null

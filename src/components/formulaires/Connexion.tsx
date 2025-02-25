@@ -5,8 +5,10 @@ import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useLocation, useNavigate} from "react-router";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
-import {Login} from "../../services_REST/serveur/Login.ts";
+import {Login} from "../../services_REST/serveur/connection/Login.ts";
 import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
+import {useCardStore} from "../../store/CardStore.ts";
+import {GetCardData} from "../../services_REST/serveur/users/GetCardData.ts";
 
 interface FormData {
     login: string
@@ -16,8 +18,9 @@ interface FormData {
 export const Connexion = () => {
     const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const {setAccessToken} = useAuthenticationJWTStore()
+    const {setCard} = useCardStore();
     const location = useLocation();
     const successMessage = location.state?.successMessage || '';
 
@@ -25,8 +28,16 @@ export const Connexion = () => {
         Login(data.login, data.password)
             .then(token => {
                 if (token != null) {
+                    console.log("token recu du serveur: " + token)
                     setAccessToken(token)
-                    navigate('/profile');
+                    return GetCardData()
+                }
+            })
+            .then(card => {
+                if (card != null) {
+                    console.log("card received: " + card)
+                    setCard(card)
+                    navigate('/profile')
                 }
             })
             .catch (error => {

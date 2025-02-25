@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import Token from "../models/users/Token.ts";
+import Token from "../models/Token.ts";
 
 interface InterfaceTokenStore {
     accessToken: Token | null

@@ -56,6 +56,43 @@
     font-size: 16px;
 }
 
+.role-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: transparent;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.role-box legend {
+    font-weight: bold;
+    color: #fff;
+    margin-right: 10px;
+}
+
+.role-box .MuiFormGroup-root {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.role-box .MuiRadio-root {
+    color: #5a3e36;
+}
+
+.role-box .Mui-checked {
+    color: #5a3e36 !important;
+}
+
+.role-box.error {
+    border: 2px solid #E63946 !important;
+    outline: none;
+}
+
 .wrapper button {
     width: 100%;
     height: 45px;
@@ -103,5 +140,5 @@
 }
 
 .button-error {
-    margin-top: 35px !important;
+    margin-top: 20px !important;
 }

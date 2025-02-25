@@ -3,12 +3,15 @@ import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router";
 import {Home} from "./pages/Home.tsx";
 import {App} from "./App.tsx";
-import {UserLogin} from "./pages/User-login.tsx";
-import {Profile} from "./pages/Profile.tsx";
-import {Signup} from "./pages/Signup.tsx";
-import {Logout} from "./pages/Logout.tsx";
+import {Login} from "./pages/connection/Login.tsx";
+import {Profile} from "./pages/users/Profile.tsx";
+import {Signup} from "./pages/connection/Signup.tsx";
+import {Logout} from "./pages/connection/Logout.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
-import {BalanceCheck} from "./pages/BalanceCheck.tsx";
+import {HistoriqueTransaction} from "./pages/users/HistoriqueTransaction.tsx";
+import {GestionStands} from "./pages/administration/GestionStands.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
+import {GestionFestivaliers} from "./pages/administration/GestionFestivaliers.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -16,14 +19,21 @@ const router = createBrowserRouter(([
         element: <App/>,
         children: [
             {path: "/", element: <Home/>},
-            {path: "/login", element: <UserLogin/>},
+            {path: "/login", element: <Login/>},
             {path: "/signup", element: <Signup/>},
-            {path: "/logout", element: <Logout/>},
             {
                 element: <PrivateRoute/>,
                 children: [
                     {path: "/profile", element: <Profile/>},
-                    {path: "/checkBalance", element: <BalanceCheck/>}
+                    {path: "/transaction-history", element: <HistoriqueTransaction/>},
+                    {path: "/logout", element: <Logout/>},
+                ]
+            },
+            {
+                element: <AdminRoute/>,
+                children: [
+                    {path: "/manage-stands", element: <GestionStands/>},
+                    {path: "/manage-festivaliers", element: <GestionFestivaliers/>}
                 ]
             }
         ]

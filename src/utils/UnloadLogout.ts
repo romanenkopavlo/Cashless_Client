@@ -1,18 +1,14 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
+import { Disconnect } from "../services_REST/serveur/connection/Disconnect.ts";
 import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
-import {Disconnect} from "../services_REST/serveur/Disconnect.ts";
 
 export const UnloadLogout = () => {
     useEffect(() => {
-        const handleBeforeUnload = async () => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             const token = useAuthenticationJWTStore.getState().accessToken?.token;
             if (token) {
-                try {
-                    Disconnect().then(response => console.log(response))
-                    console.log("Logout request sent before unload");
-                } catch (error) {
-                    console.error("Error during logout request:", error);
-                }
+                event.preventDefault();
+                sessionStorage.setItem("isPageRefreshing", "true");
             }
         };
 
@@ -21,5 +17,15 @@ export const UnloadLogout = () => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, []);
+    });
+
+    useEffect(() => {
+        const isRefreshing = sessionStorage.getItem("isPageRefreshing");
+        if (isRefreshing) {
+            sessionStorage.removeItem("isPageRefreshing");
+            Disconnect().then(() => {
+                console.log("Redirecting to login");
+            })
+        }
+    });
 }

@@ -2,15 +2,19 @@ import {Box, Button, Typography, TextField, Grid2, styled, Container} from "@mui
 import { useState } from "react";
 import { FaCreditCard } from "react-icons/fa";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {AddCard} from "../../services_REST/serveur/AddCard.ts";
+import {AddCard} from "../../services_REST/serveur/users/AddCard.ts";
 import {ValidationCard} from "./ValidationCard.ts";
-import {useCardStore} from "../../store/useCardStore.ts";
+import {useCardStore} from "../../store/CardStore.ts";
 
 interface FormData {
     cardNumber: number
 }
 
-export const AddCardForm = () => {
+interface AddCardFormProps {
+    setSuccessMessage: (message: string | null) => void;
+}
+
+export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
     const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
     const {setCard} = useCardStore()
@@ -23,6 +27,7 @@ export const AddCardForm = () => {
                     console.log(card)
                     console.log("Balance: " + card.montant)
                     console.log("Number: " + card.numero)
+                    setSuccessMessage("Carte ajoutée avec succès !");
                 }
             })
             .catch (error => {
