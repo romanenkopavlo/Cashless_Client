@@ -23,12 +23,9 @@ export const UnloadLogout = () => {
         const isRefreshing = sessionStorage.getItem("isPageRefreshing");
         if (isRefreshing) {
             sessionStorage.removeItem("isPageRefreshing");
-
             Disconnect().then(() => {
                 console.log("Redirecting to login");
             })
         }
     });
-
-    return null;
 }

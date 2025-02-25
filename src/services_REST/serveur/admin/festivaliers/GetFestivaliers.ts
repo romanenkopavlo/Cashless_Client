@@ -8,7 +8,7 @@ export const GetFestivaliers = async() => {
     try {
         const axiosJWT = AxiosJwt();
         const response = await axiosJWT.get(`${URL_GET_FESTIVALIERS}`);
-        console.log(`response.data de requette GetStands ${response.data}`)
+        console.log(`response.data de requette GetFestivaliers ${response.data}`)
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {

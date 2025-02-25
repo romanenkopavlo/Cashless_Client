@@ -23,9 +23,12 @@ import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
 import {CreateStand} from "../../services_REST/serveur/admin/stands/CreateStand.ts";
 import {UpdateStand} from "../../services_REST/serveur/admin/stands/UpdateStand.ts";
 import {DeleteStand} from "../../services_REST/serveur/admin/stands/DeleteStand.ts";
+import {useStandStore} from "../../store/StandStore.ts";
+import {useVariablesStore} from "../../store/VariablesStore.ts";
 
 export const GestionStands = () => {
-    const [stands, setStands] = useState<Stand[]>([]);
+    const {stands, setStands, addStand, updateStand, deleteStand} = useStandStore();
+    const {isFetchedStands, setIsFetchedStands} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
     const [nomError, setNomError] = useState<string | null>(null);
@@ -37,12 +40,24 @@ export const GestionStands = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Stand>(new Stand(0, "", 0, ""));
 
-
     useEffect(() => {
-        GetStands()
-            .then((data) => setStands(data))
-            .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
-    }, []);
+        if (!isFetchedStands) {
+            setIsFetchedStands(true)
+
+            GetStands()
+                .then((data) => {
+                    if (!data || !Array.isArray(data)) {
+                        setStands([]);
+                    } else {
+                        setStands(data);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la récupération des festivaliers:", error);
+                    setStands([]);
+                });
+        }
+    }, [isFetchedStands, setStands, setIsFetchedStands]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -109,11 +124,7 @@ export const GestionStands = () => {
         if (isEditing) {
             UpdateStand(formData.id_stand, formData.nom_stand, formData.solde, formData.nom_categorie)
                 .then((data) => {
-                    console.log(data);
-                    return GetStands();
-                })
-                .then((data) => {
-                    setStands(data);
+                    updateStand(data.updatedStand);
                     handleClose();
                 })
                 .catch((error) => {
@@ -123,11 +134,7 @@ export const GestionStands = () => {
         } else {
             CreateStand(formData.nom_stand, formData.solde, formData.nom_categorie)
                 .then((data) => {
-                    console.log(data);
-                    return GetStands();
-                })
-                .then((data) => {
-                    setStands(data)
+                    addStand(data.newStand);
                     handleClose();
                 })
                 .catch((error) => {
@@ -139,11 +146,9 @@ export const GestionStands = () => {
 
     const handleDelete = (id: number) => {
         DeleteStand(id)
-            .then((data) => {
-                console.log(data);
-                return GetStands();
+            .then(() => {
+                deleteStand(id)
             })
-            .then((data) => setStands(data))
             .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
     };
 
@@ -171,7 +176,7 @@ export const GestionStands = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {stands ? (
+                            {stands && stands.length > 0 ? (
                                 stands.map((stand) => (
                                     <TableRow key={stand.id_stand}>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>{stand.id_stand}</TableCell>

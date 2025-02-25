@@ -21,9 +21,12 @@ import { ValidationConnexion } from "../../components/formulaires/ValidationConn
 import { UpdateFestivalier } from "../../services_REST/serveur/admin/festivaliers/UpdateFestivalier.ts";
 import {CreateFestivalier} from "../../services_REST/serveur/admin/festivaliers/CreateFestivalier.ts";
 import {DeleteFestivalier} from "../../services_REST/serveur/admin/festivaliers/DeleteFestivalier.ts";
+import {useFestivalierStore} from "../../store/FestivalierStore.ts";
+import { useVariablesStore } from "../../store/VariablesStore.ts";
 
 export const GestionFestivaliers = () => {
-    const [festivaliers, setFestivaliers] = useState<User[]>([]);
+    const {festivaliers, setFestivaliers, addFestivalier, updateFestivalier, deleteFestivalier} = useFestivalierStore();
+    const {isFetchedVisitors, setIsFetchedVisitors} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
@@ -38,12 +41,24 @@ export const GestionFestivaliers = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<User>(new User(0, "", "", "", ""));
 
-
     useEffect(() => {
-        GetFestivaliers()
-            .then((data) => setFestivaliers(data))
-            .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
-    }, []);
+        if (!isFetchedVisitors) {
+            setIsFetchedVisitors(true)
+
+            GetFestivaliers()
+                .then((data) => {
+                    if (!data || !Array.isArray(data)) {
+                        setFestivaliers([]);
+                    } else {
+                        setFestivaliers(data);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la récupération des festivaliers:", error);
+                    setFestivaliers([]);
+                });
+        }
+    }, [isFetchedVisitors, setFestivaliers, setIsFetchedVisitors]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -109,9 +124,9 @@ export const GestionFestivaliers = () => {
             newErrors.prenom = ValidationConnexion.name.pattern.message;
         }
 
-        if (!formData.username.trim()) {
+        if (!formData.login.trim()) {
             newErrors.username = ValidationConnexion.login.required;
-        } else if (!ValidationConnexion.login.pattern.value.test(formData.username)) {
+        } else if (!ValidationConnexion.login.pattern.value.test(formData.login)) {
             newErrors.username = ValidationConnexion.login.pattern.message;
         }
 
@@ -130,13 +145,9 @@ export const GestionFestivaliers = () => {
         }
 
         if (isEditing) {
-            UpdateFestivalier(formData.id, formData.nom, formData.prenom, formData.username)
+            UpdateFestivalier(formData.id, formData.nom, formData.prenom, formData.login)
                 .then((data) => {
-                    console.log(data);
-                    return GetFestivaliers();
-                })
-                .then((data) => {
-                    setFestivaliers(data);
+                    updateFestivalier(data.updatedFestivalier);
                     handleClose();
                 })
                 .catch((error) => {
@@ -144,13 +155,9 @@ export const GestionFestivaliers = () => {
                     setError(error.message)
                 })
         } else {
-            CreateFestivalier(formData.nom, formData.prenom, formData.username, password)
+            CreateFestivalier(formData.nom, formData.prenom, formData.login, password)
                 .then((data) => {
-                    console.log(data);
-                    return GetFestivaliers();
-                })
-                .then((data) => {
-                    setFestivaliers(data);
+                    addFestivalier(data.newFestivalier);
                     handleClose();
                 })
                 .catch((error) => {
@@ -162,11 +169,9 @@ export const GestionFestivaliers = () => {
 
     const handleDelete = (id: number) => {
         DeleteFestivalier(id)
-            .then((data) => {
-                console.log(data);
-                return GetFestivaliers();
+            .then(() => {
+                deleteFestivalier(id);
             })
-            .then((data) => setFestivaliers(data))
             .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
     };
 
@@ -194,13 +199,13 @@ export const GestionFestivaliers = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {festivaliers ? (
+                            {festivaliers && festivaliers.length > 0 ? (
                                 festivaliers.map((festivalier) => (
                                     <TableRow key={festivalier.id}>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>{festivalier.id}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{festivalier.nom}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{festivalier.prenom}</TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{festivalier.username}</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{festivalier.login}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             <Button onClick={() => handleOpen(true, festivalier)}><Edit sx={{color: "#7f5656"}}/></Button>
                                             <Button onClick={() => handleDelete(festivalier.id)} color="error"><Delete /></Button>
@@ -222,7 +227,7 @@ export const GestionFestivaliers = () => {
                 <DialogContent>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Nom" name="nom" value={formData.nom} onChange={handleChange} error={!!errors.nom} helperText={errors.nom}/>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Prénom" name="prenom" value={formData.prenom} onChange={handleChange} error={!!errors.prenom} helperText={errors.prenom}/>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Login" name="username" value={formData.username} onChange={handleChange} error={!!errors.username} helperText={errors.username}/>
+                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Login" name="login" value={formData.login} onChange={handleChange} error={!!errors.username} helperText={errors.username}/>
                     {!isEditing && (<TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Mot de passe" name="password" type="password" value={password} onChange={handlePasswordChange} error={!!errors.password} helperText={errors.password}/>)}
                     {error && (
                         <Typography color="error" variant="body2" sx={{ mt: 1 }}>

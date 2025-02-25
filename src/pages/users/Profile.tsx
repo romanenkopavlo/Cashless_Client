@@ -62,7 +62,7 @@ export const Profile = () => {
                         variant="subtitle1"
                         sx={{fontWeight: 'bold', textAlign: 'left'}}
                     >
-                        Username: {user?.username}
+                        Username: {user?.login}
                     </Typography>
                     <Typography
                         variant="subtitle1"
