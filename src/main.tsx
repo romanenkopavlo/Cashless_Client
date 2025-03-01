@@ -12,6 +12,7 @@ import {HistoriqueTransaction} from "./pages/users/HistoriqueTransaction.tsx";
 import {GestionStands} from "./pages/administration/GestionStands.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import {GestionFestivaliers} from "./pages/administration/GestionFestivaliers.tsx";
+import {GestionBenevoles} from "./pages/administration/GestionBenevoles.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -33,7 +34,8 @@ const router = createBrowserRouter(([
                 element: <AdminRoute/>,
                 children: [
                     {path: "/manage-stands", element: <GestionStands/>},
-                    {path: "/manage-festivaliers", element: <GestionFestivaliers/>}
+                    {path: "/manage-festivaliers", element: <GestionFestivaliers/>},
+                    {path: "/manage-benevoles", element: <GestionBenevoles/>},
                 ]
             }
         ]

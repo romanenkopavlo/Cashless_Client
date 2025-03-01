@@ -36,4 +36,7 @@ export const ValidationConnexion = {
             message: "Le Numéro de la carte doit contenir exactement 16 chiffres.",
         },
     },
+    nom_stand: {
+        required: "Stand obligatoire",
+    }
 }

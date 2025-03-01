@@ -15,19 +15,34 @@ import {useEffect, useState} from "react";
 import {useCardStore} from "../../store/CardStore.ts";
 import {GetTransactions} from "../../services_REST/serveur/users/GetTransactions.ts";
 import {ArrowDownward, ArrowUpward} from "@mui/icons-material";
-import Transaction from "../../models/Transaction.ts";
+import {useTransactionStore} from "../../store/TransactionStore.ts";
+import {useVariablesStore} from "../../store/VariablesStore.ts";
 
 export const HistoriqueTransaction = () => {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const {card} = useCardStore();
+    const {transactions, setTransactions} = useTransactionStore()
+    const {isFetchedTransactions, setIsFetchedTransactions} = useVariablesStore()
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     useEffect(() => {
-        if (!card?.numero) return;
-        GetTransactions(card?.numero)
-            .then((data) => setTransactions(data))
-            .catch((error) => console.error("Erreur lors de la récupération des transactions:", error));
-    }, [card?.numero]);
+        if (!isFetchedTransactions) {
+            setIsFetchedTransactions(true)
+            
+            if (!card?.numero) return;
+            GetTransactions(card?.numero)
+                .then((data) => {
+                    if (!data || !Array.isArray(data)) {
+                        setTransactions([]);
+                    } else {
+                        setTransactions(data);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la récupération des transactions:", error);
+                    setTransactions([])
+                })
+        }
+    }, [card?.numero, isFetchedTransactions, setIsFetchedTransactions, setTransactions]);
 
     const handleSortByDate = () => {
         if (transactions) {
@@ -63,7 +78,7 @@ export const HistoriqueTransaction = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {transactions ? (
+                            {transactions && transactions.length > 0 ? (
                                 transactions.map((transaction) => (
                                     <TableRow key={transaction.id_transaction}>
                                         <TableCell align="center">{new Date(transaction.date).toLocaleString()}</TableCell>

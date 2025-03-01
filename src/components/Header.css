@@ -17,7 +17,7 @@
 
 .logo {
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
     color: white;
     text-decoration: none;
 }
@@ -36,7 +36,7 @@
 .nav-link {
     color: white;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1rem !important;
     transition: color 0.3s ease;
 }
 
