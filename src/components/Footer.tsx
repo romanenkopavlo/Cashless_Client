@@ -1,28 +1,19 @@
-import { Link } from "react-router-dom";
-import { Container, Typography, Box, Button } from "@mui/material";
-import './Footer.css';
+import {Paper, BottomNavigation, BottomNavigationAction} from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 
 export const Footer = () => {
     return (
-        <Box component="footer" className="footer">
-            <Container maxWidth="lg">
-                <Box className="footer-content">
-                    <Typography variant="h6" className="footer-title">
-                        Château de Freycinet
-                    </Typography>
-                    <Box className="footer-nav">
-                        <Link to="/about" className="footer-link">
-                            <Button color="inherit">À propos</Button>
-                        </Link>
-                        <Link to="/contact" className="footer-link">
-                            <Button color="inherit">Contact</Button>
-                        </Link>
-                        <Link to="/privacy-policy" className="footer-link">
-                            <Button color="inherit">Politique de confidentialité</Button>
-                        </Link>
-                    </Box>
-                </Box>
-            </Container>
-        </Box>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0}} elevation={3}>
+            <BottomNavigation
+                showLabels
+                sx={{bgcolor: '#bc8f8f'}}
+            >
+                <BottomNavigationAction sx={{color: '#ffffff'}} label="Accueil" icon={<HomeIcon />} />
+                <BottomNavigationAction sx={{color: '#ffffff'}} label="À propos" icon={<InfoIcon />} />
+                <BottomNavigationAction sx={{color: '#ffffff'}} label="Contact" icon={<ContactMailIcon />} />
+            </BottomNavigation>
+        </Paper>
     );
 }

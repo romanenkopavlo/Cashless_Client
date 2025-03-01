@@ -17,12 +17,12 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import User from "../../models/User.ts";
 import {GetFestivaliers} from "../../services_REST/serveur/admin/festivaliers/GetFestivaliers.ts";
-import { ValidationConnexion } from "../../components/formulaires/ValidationConnexion.ts";
 import { UpdateFestivalier } from "../../services_REST/serveur/admin/festivaliers/UpdateFestivalier.ts";
 import {CreateFestivalier} from "../../services_REST/serveur/admin/festivaliers/CreateFestivalier.ts";
 import {DeleteFestivalier} from "../../services_REST/serveur/admin/festivaliers/DeleteFestivalier.ts";
 import {useFestivalierStore} from "../../store/FestivalierStore.ts";
 import { useVariablesStore } from "../../store/VariablesStore.ts";
+import {validateForm} from "../../utils/validateForm.ts";
 
 export const GestionFestivaliers = () => {
     const {festivaliers, setFestivaliers, addFestivalier, updateFestivalier, deleteFestivalier} = useFestivalierStore();
@@ -110,33 +110,7 @@ export const GestionFestivaliers = () => {
     };
 
     const handleSubmit = () => {
-        const newErrors: { [key: string]: string | null } = {};
-
-        if (!formData.nom.trim()) {
-            newErrors.nom = ValidationConnexion.surname.required;
-        } else if (!ValidationConnexion.surname.pattern.value.test(formData.nom)) {
-            newErrors.nom = ValidationConnexion.surname.pattern.message;
-        }
-
-        if (!formData.prenom.trim()) {
-            newErrors.prenom = ValidationConnexion.name.required;
-        } else if (!ValidationConnexion.name.pattern.value.test(formData.prenom)) {
-            newErrors.prenom = ValidationConnexion.name.pattern.message;
-        }
-
-        if (!formData.login.trim()) {
-            newErrors.username = ValidationConnexion.login.required;
-        } else if (!ValidationConnexion.login.pattern.value.test(formData.login)) {
-            newErrors.username = ValidationConnexion.login.pattern.message;
-        }
-
-        if (!isEditing) {
-            if (!password.trim()) {
-                newErrors.password = ValidationConnexion.password.required;
-            } else if (!ValidationConnexion.password.pattern.value.test(password)) {
-                newErrors.password = ValidationConnexion.password.pattern.message;
-            }
-        }
+        const newErrors = validateForm(formData, isEditing, password, "visitor");
 
         setErrors(newErrors);
 
@@ -151,7 +125,7 @@ export const GestionFestivaliers = () => {
                     handleClose();
                 })
                 .catch((error) => {
-                    console.error("Erreur lors de la récupération des stands:", error);
+                    console.error("Erreur lors de la récupération des festivaliers:", error);
                     setError(error.message)
                 })
         } else {
@@ -161,7 +135,7 @@ export const GestionFestivaliers = () => {
                     handleClose();
                 })
                 .catch((error) => {
-                    console.error("Erreur lors de la récupération des stands:", error);
+                    console.error("Erreur lors de la récupération des festivaliers:", error);
                     setError(error.message)
                 })
         }
@@ -172,7 +146,7 @@ export const GestionFestivaliers = () => {
             .then(() => {
                 deleteFestivalier(id);
             })
-            .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
+            .catch((error) => console.error("Erreur lors de la suppression des festivaliers:", error));
     };
 
     return (

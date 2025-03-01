@@ -16,5 +16,13 @@
   "URL_GET_FESTIVALIERS": "/api/admin/festivaliers/getFestivaliers",
   "URL_CREATE_FESTIVALIER": "/api/admin/festivaliers/createFestivalier",
   "URL_UPDATE_FESTIVALIER": "/api/admin/festivaliers/updateFestivalier",
-  "URL_DELETE_FESTIVALIER": "/api/admin/festivaliers/deleteFestivalier"
+  "URL_DELETE_FESTIVALIER": "/api/admin/festivaliers/deleteFestivalier",
+  "URL_GET_BENEVOLES": "/api/admin/benevoles/getBenevoles",
+  "URL_CREATE_BENEVOLE": "/api/admin/benevoles/createBenevole",
+  "URL_UPDATE_BENEVOLE": "/api/admin/benevoles/updateBenevole",
+  "URL_DELETE_BENEVOLE": "/api/admin/benevoles/deleteBenevole",
+  "URL_GET_CATEGORIES": "/api/admin/categories/getCategories",
+  "URL_CREATE_CATEGORY": "/api/admin/categories/createCategory",
+  "URL_UPDATE_CATEGORY": "/api/admin/categories/updateCategory",
+  "URL_DELETE_CATEGORY": "/api/admin/categories/deleteCategory"
 }

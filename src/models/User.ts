@@ -5,7 +5,7 @@ export default class User {
     prenom: string
     role: string
 
-    constructor(id_user: number, username: string, nom :string, prenom: string, role: string) {
+    constructor(id_user: number, username: string, nom: string, prenom: string, role: string) {
         this.id = id_user
         this.login = username
         this.nom = nom

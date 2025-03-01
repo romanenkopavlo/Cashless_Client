@@ -14,7 +14,7 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle, Typography
+    DialogTitle, Typography, InputLabel, Select, MenuItem, FormControl, SelectChangeEvent
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import Stand from "../../models/Stand.ts";
@@ -25,9 +25,15 @@ import {UpdateStand} from "../../services_REST/serveur/admin/stands/UpdateStand.
 import {DeleteStand} from "../../services_REST/serveur/admin/stands/DeleteStand.ts";
 import {useStandStore} from "../../store/StandStore.ts";
 import {useVariablesStore} from "../../store/VariablesStore.ts";
+import {GestionCategories} from "./GestionCategoriesStands.tsx";
+import {useCategorieStore} from "../../store/CategorieStore.ts";
+import {useBenevoleStore} from "../../store/BenevoleStore.ts";
+import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandStore();
+    const {categories} = useCategorieStore();
+    const {setBenevoles} = useBenevoleStore();
     const {isFetchedStands, setIsFetchedStands} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
@@ -105,6 +111,13 @@ export const GestionStands = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        setFormData({
+            ...formData,
+            [event.target.name as string]: event.target.value
+        });
+    };
+
     const handleSubmit = () => {
         if (!soldeRegex.test(String(formData.solde))) {
             setSoldeError("Veuillez entrer un nombre positif valide");
@@ -125,6 +138,14 @@ export const GestionStands = () => {
             UpdateStand(formData.id_stand, formData.nom_stand, formData.solde, formData.nom_categorie)
                 .then((data) => {
                     updateStand(data.updatedStand);
+                    return GetBenevoles();
+                })
+                .then((data) => {
+                    if (!data || !Array.isArray(data)) {
+                        setBenevoles([]);
+                    } else {
+                        setBenevoles(data);
+                    }
                     handleClose();
                 })
                 .catch((error) => {
@@ -148,20 +169,33 @@ export const GestionStands = () => {
         DeleteStand(id)
             .then(() => {
                 deleteStand(id)
+                return GetBenevoles();
             })
-            .catch((error) => console.error("Erreur lors de la récupération des stands:", error));
+            .then((data) => {
+                if (!data || !Array.isArray(data)) {
+                    setBenevoles([]);
+                } else {
+                    setBenevoles(data);
+                }
+            })
+            .catch((error) => console.error("Erreur lors de la suppression des stands:", error));
     };
 
     return (
         <>
             <Header />
-            <div style={{ padding: "20px", textAlign: "center" }}>
+            <div style={{height: "1065px"}}>
+            <div style={{padding: "20px", textAlign: "center" }}>
                 <Typography variant="h5" sx={{ mt: 1 }}>
                     Gestion des stands
                 </Typography>
-                <Button variant="contained" onClick={() => handleOpen(false)} style={{ marginTop: "20px", backgroundColor: "#7f5656" }}>
-                    Ajouter un stand
-                </Button>
+                {categories && categories.length > 0 ? (
+                    <Button variant="contained" onClick={() => handleOpen(false)} style={{ marginTop: "20px", backgroundColor: "#7f5656" }}>
+                        Ajouter un stand
+                    </Button>
+                ) : (
+                    <Typography variant="h6" sx={{ mt: 1 }}>L'ajout d'un stand est impossible. Veuillez d'abord ajouter des catégories.</Typography>
+                )}
             </div>
             <div style={{ padding: "20px" }}>
                 <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
@@ -182,9 +216,9 @@ export const GestionStands = () => {
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>{stand.id_stand}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_stand}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{stand.solde}</TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_categorie}</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_categorie ? stand.nom_categorie : '—'}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
-                                            <Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>
+                                            {categories && categories.length > 0 && (<Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(stand.id_stand)} color="error"><Delete /></Button>
                                         </TableCell>
                                     </TableRow>
@@ -199,12 +233,41 @@ export const GestionStands = () => {
                 </TableContainer>
             </div>
 
+            <GestionCategories/>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>{isEditing ? "Modifier le stand" : "Ajouter un stand"}</DialogTitle>
                 <DialogContent>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Nom" name="nom_stand" value={formData.nom_stand} onChange={handleChange} error={!!nomError} helperText={nomError}/>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Solde (€)" name="solde" type="number" value={formData.solde} onChange={handleChange} error={!!soldeError} helperText={soldeError}/>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Catégorie" name="nom_categorie" value={formData.nom_categorie} onChange={handleChange} error={!!categorieError} helperText={categorieError}/>
+                    <FormControl fullWidth margin="dense" sx={styleCustom} error={!!categorieError}>
+                        <InputLabel id="categorie-label">Catégorie</InputLabel>
+                        <Select
+                            labelId="categorie-label"
+                            label="Catégorie"
+                            name="nom_categorie"
+                            value={formData.nom_categorie}
+                            onChange={handleSelectChange}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 180,
+                                        overflow: 'auto',
+                                    },
+                                },
+                            }}
+                        >
+                            {categories && categories.length > 0 && categories.map((categorie) => (
+                                <MenuItem key={categorie.id_categorie} value={categorie.nom_categorie}>
+                                    {categorie.nom_categorie}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {categorieError && (
+                            <Typography color="error" variant="caption" sx={{mt: 0.5}}>
+                                {categorieError}
+                            </Typography>
+                        )}
+                    </FormControl>
                     {error && (
                         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                             {error}
@@ -216,6 +279,7 @@ export const GestionStands = () => {
                     <Button onClick={handleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">{isEditing ? "Modifier" : "Ajouter"}</Button>
                 </DialogActions>
             </Dialog>
+            </div>
             <Footer />
         </>
     );
