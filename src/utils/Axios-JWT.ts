@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
 import parameters from "../../public/parameters.json";
 import Token from "../models/Token.ts";
 

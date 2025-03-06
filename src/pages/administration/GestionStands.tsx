@@ -19,21 +19,21 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 import Stand from "../../models/Stand.ts";
 import * as React from "react";
-import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
 import {CreateStand} from "../../services_REST/serveur/admin/stands/CreateStand.ts";
 import {UpdateStand} from "../../services_REST/serveur/admin/stands/UpdateStand.ts";
 import {DeleteStand} from "../../services_REST/serveur/admin/stands/DeleteStand.ts";
-import {useStandStore} from "../../store/StandStore.ts";
-import {useVariablesStore} from "../../store/VariablesStore.ts";
+import {useStandsStore} from "../../stores/StandsStore.ts";
+import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import {GestionCategories} from "./GestionCategoriesStands.tsx";
-import {useCategorieStore} from "../../store/CategorieStore.ts";
-import {useBenevoleStore} from "../../store/BenevoleStore.ts";
+import {useCategoriesStore} from "../../stores/CategoriesStore.ts";
+import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
+import {updateStands} from "../../services/standsServices.ts";
 
 export const GestionStands = () => {
-    const {stands, setStands, addStand, updateStand, deleteStand} = useStandStore();
-    const {categories} = useCategorieStore();
-    const {setBenevoles} = useBenevoleStore();
+    const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
+    const {categories} = useCategoriesStore();
+    const {setBenevoles} = useBenevolesStore();
     const {isFetchedStands, setIsFetchedStands} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
@@ -50,18 +50,7 @@ export const GestionStands = () => {
         if (!isFetchedStands) {
             setIsFetchedStands(true)
 
-            GetStands()
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
-                        setStands([]);
-                    } else {
-                        setStands(data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des festivaliers:", error);
-                    setStands([]);
-                });
+            updateStands(setStands)
         }
     }, [isFetchedStands, setStands, setIsFetchedStands]);
 

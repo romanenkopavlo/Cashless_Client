@@ -1,5 +1,5 @@
 import {Navigate, Outlet} from 'react-router-dom'
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
 
 

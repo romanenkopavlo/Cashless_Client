@@ -15,8 +15,8 @@ import {
 import {Delete, Edit} from "@mui/icons-material";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import { useVariablesStore } from "../../store/VariablesStore.ts";
-import {useBenevoleStore} from "../../store/BenevoleStore.ts";
+import { useVariablesStore } from "../../stores/VariablesStore.ts";
+import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import Benevole from "../../models/Benevole.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 import {UpdateBenevole} from "../../services_REST/serveur/admin/benevoles/UpdateBenevole.ts";
@@ -24,11 +24,11 @@ import {CreateBenevole} from "../../services_REST/serveur/admin/benevoles/Create
 import {DeleteBenevole} from "../../services_REST/serveur/admin/benevoles/DeleteBenevole.ts";
 import {validateForm} from "../../utils/validateForm.ts";
 import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
-import {useStandStore} from "../../store/StandStore.ts";
+import {useStandsStore} from "../../stores/StandsStore.ts";
 
 export const GestionBenevoles = () => {
-    const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevoleStore();
-    const {stands, setStands} = useStandStore();
+    const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevolesStore();
+    const {stands, setStands} = useStandsStore();
     const {isFetchedBenevoles, isFetchedStands, setIsFetchedBenevoles, setIsFetchedStands} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 

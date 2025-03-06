@@ -1,14 +1,14 @@
 import {create} from "zustand";
 import User from "../models/User.ts";
 
-interface InterfaceFestivalierStore {
+interface InterfaceFestivaliersStore {
     festivaliers: User[]
     setFestivaliers: (newFestivaliers: User[]) => void
     addFestivalier: (newFestivalier: User) => void
     updateFestivalier: (updatedFestivalier: User) => void
     deleteFestivalier: (id: number) => void
 }
-export const useFestivalierStore = create<InterfaceFestivalierStore>((set) => ({
+export const useFestivaliersStore = create<InterfaceFestivaliersStore>((set) => ({
     festivaliers: [],
 
     setFestivaliers: (newFestivaliers) => set({ festivaliers: newFestivaliers }),

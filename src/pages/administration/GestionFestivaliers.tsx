@@ -20,12 +20,18 @@ import {GetFestivaliers} from "../../services_REST/serveur/admin/festivaliers/Ge
 import { UpdateFestivalier } from "../../services_REST/serveur/admin/festivaliers/UpdateFestivalier.ts";
 import {CreateFestivalier} from "../../services_REST/serveur/admin/festivaliers/CreateFestivalier.ts";
 import {DeleteFestivalier} from "../../services_REST/serveur/admin/festivaliers/DeleteFestivalier.ts";
-import {useFestivalierStore} from "../../store/FestivalierStore.ts";
-import { useVariablesStore } from "../../store/VariablesStore.ts";
+import {useFestivaliersStore} from "../../stores/FestivaliersStore.ts";
+import { useVariablesStore } from "../../stores/VariablesStore.ts";
 import {validateForm} from "../../utils/validateForm.ts";
+import {useCardsStore} from "../../stores/CardsStore.ts";
+import {useTransactionsStore} from "../../stores/TransactionsStore.ts";
+import {updateCards} from "../../services/cardsServices.ts";
+import {updateTransactions} from "../../services/transactionsServices.ts";
 
 export const GestionFestivaliers = () => {
-    const {festivaliers, setFestivaliers, addFestivalier, updateFestivalier, deleteFestivalier} = useFestivalierStore();
+    const {festivaliers, setFestivaliers, addFestivalier, updateFestivalier, deleteFestivalier} = useFestivaliersStore();
+    const {setCards} = useCardsStore();
+    const {setTransactions} = useTransactionsStore();
     const {isFetchedVisitors, setIsFetchedVisitors} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
@@ -109,7 +115,7 @@ export const GestionFestivaliers = () => {
         setPassword(e.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const newErrors = validateForm(formData, isEditing, password, "visitor");
 
         setErrors(newErrors);
@@ -119,15 +125,21 @@ export const GestionFestivaliers = () => {
         }
 
         if (isEditing) {
-            UpdateFestivalier(formData.id, formData.nom, formData.prenom, formData.login)
-                .then((data) => {
-                    updateFestivalier(data.updatedFestivalier);
-                    handleClose();
-                })
-                .catch((error) => {
+            try {
+                const data = await UpdateFestivalier(formData.id, formData.nom, formData.prenom, formData.login)
+                updateFestivalier(data.updatedFestivalier);
+                updateTransactions(setTransactions);
+                updateCards(setCards);
+                handleClose();
+            } catch (error) {
+                if (error instanceof Error) {
                     console.error("Erreur lors de la récupération des festivaliers:", error);
-                    setError(error.message)
-                })
+                    setError(error.message);
+                } else {
+                    console.error("Erreur inconnue:", error);
+                    setError("Une erreur inconnue est survenue.");
+                }
+            }
         } else {
             CreateFestivalier(formData.nom, formData.prenom, formData.login, password)
                 .then((data) => {
@@ -141,12 +153,16 @@ export const GestionFestivaliers = () => {
         }
     };
 
-    const handleDelete = (id: number) => {
-        DeleteFestivalier(id)
-            .then(() => {
-                deleteFestivalier(id);
-            })
-            .catch((error) => console.error("Erreur lors de la suppression des festivaliers:", error));
+    const handleDelete = async (id: number) => {
+        try {
+            await DeleteFestivalier(id)
+            deleteFestivalier(id)
+
+            updateTransactions(setTransactions)
+            updateCards(setCards)
+        } catch (error) {
+            console.error("Erreur lors de la suppression des festivaliers:", error)
+        }
     };
 
     return (

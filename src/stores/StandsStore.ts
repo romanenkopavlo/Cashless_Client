@@ -1,14 +1,14 @@
 import {create} from "zustand";
 import Stand from "../models/Stand.ts";
 
-interface InterfaceStandStore {
+interface InterfaceStandsStore {
     stands: Stand[]
     setStands: (newStands: Stand[]) => void
     addStand: (newStand: Stand) => void;
     updateStand: (updatedStand: Stand) => void;
     deleteStand: (id: number) => void;
 }
-export const useStandStore = create<InterfaceStandStore>((set) => ({
+export const useStandsStore = create<InterfaceStandsStore>((set) => ({
     stands: [],
 
     setStands: (newStands) => set({ stands: newStands }),

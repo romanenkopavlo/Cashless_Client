@@ -1,14 +1,14 @@
 import {create} from "zustand";
 import Benevole from "../models/Benevole.ts";
 
-interface InterfaceBenevoleStore {
+interface InterfaceBenevolesStore {
     benevoles: Benevole[]
     setBenevoles: (newBenevoles: Benevole[]) => void
     addBenevole: (newBenevole: Benevole) => void
     updateBenevole: (updatedBenevole: Benevole) => void
     deleteBenevole: (id: number) => void
 }
-export const useBenevoleStore = create<InterfaceBenevoleStore>((set) => ({
+export const useBenevolesStore = create<InterfaceBenevolesStore>((set) => ({
     benevoles: [],
 
     setBenevoles: (newBenevoles) => set({ benevoles: newBenevoles }),

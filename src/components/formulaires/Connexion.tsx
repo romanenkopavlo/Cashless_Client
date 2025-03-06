@@ -6,8 +6,8 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {useLocation, useNavigate} from "react-router";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
 import {Login} from "../../services_REST/serveur/connection/Login.ts";
-import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
-import {useCardStore} from "../../store/CardStore.ts";
+import {useAuthenticationJWTStore} from "../../stores/AuthenticationJWT.ts";
+import {useCardStore} from "../../stores/CardStore.ts";
 import {GetCardData} from "../../services_REST/serveur/users/GetCardData.ts";
 
 interface FormData {

@@ -1,5 +1,5 @@
 import './Connexion.css'
-import {FaCreditCard, FaLock, FaUser, FaUserTag} from "react-icons/fa"
+import {FaLock, FaUser, FaUserTag} from "react-icons/fa"
 import {Container, FormControlLabel, FormLabel, Radio, RadioGroup, Typography} from "@mui/material";
 import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
@@ -12,7 +12,6 @@ interface FormData {
     surname: string
     login: string
     password: string
-    cardNumber: string
     role: string
 }
 
@@ -22,7 +21,7 @@ export const Inscription = () => {
     const navigate = useNavigate()
 
     const onSubmit:SubmitHandler<FormData>=data => {
-        CreateAccount(data.name, data.surname, data.login, data.role, data.password, data.cardNumber)
+        CreateAccount(data.name, data.surname, data.login, data.role, data.password)
             .then(response => {
                 if (response != null) {
                     console.log("Response after account's creation: " + response)
@@ -59,11 +58,6 @@ export const Inscription = () => {
                             {errors.login && <p className="error-message">{errors.login.message}</p>}
                         </div>
                         <div className={`input-box ${errors.login ? "input-box-error" : ""}`}>
-                            <input {...register("cardNumber", ValidationConnexion.cardNumber)} type="text" className={errors.cardNumber ? "input-error" : ""} placeholder="Numéro de la carte" required={false}/>
-                            <FaCreditCard className="icon"/>
-                            {errors.cardNumber && <p className="error-message">{errors.cardNumber.message}</p>}
-                        </div>
-                        <div className={`input-box ${errors.cardNumber ? "input-box-error" : ""}`}>
                             <input {...register("password", ValidationConnexion.password)} type="password" className={errors.password ? "input-error" : ""} placeholder="Mot de passe ⃰" required/>
                             <FaLock className="icon"/>
                             {errors.password && <p className="error-message">{errors.password.message}</p>}

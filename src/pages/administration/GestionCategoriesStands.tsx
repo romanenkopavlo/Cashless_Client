@@ -12,19 +12,19 @@ import {
 import {Delete, Edit} from "@mui/icons-material";
 import {useEffect, useState} from "react";
 import Categorie from "../../models/Categorie.ts";
-import {useVariablesStore} from "../../store/VariablesStore.ts";
-import { useCategorieStore } from "../../store/CategorieStore.ts";
+import {useVariablesStore} from "../../stores/VariablesStore.ts";
+import { useCategoriesStore } from "../../stores/CategoriesStore.ts";
 import * as React from "react";
 import {UpdateCategory} from "../../services_REST/serveur/admin/categories/UpdateCategory.ts";
 import {CreateCategory} from "../../services_REST/serveur/admin/categories/CreateCategory.ts";
 import {DeleteCategory} from "../../services_REST/serveur/admin/categories/DeleteCategory.ts";
 import {GetCategories} from "../../services_REST/serveur/admin/categories/GetCategories.ts";
-import {useStandStore} from "../../store/StandStore.ts";
+import {useStandsStore} from "../../stores/StandsStore.ts";
 import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
 
 export const GestionCategories = () => {
-    const {categories, setCategories, addCategorie, updateCategorie, deleteCategorie} = useCategorieStore();
-    const {setStands} = useStandStore();
+    const {categories, setCategories, addCategorie, updateCategorie, deleteCategorie} = useCategoriesStore();
+    const {setStands} = useStandsStore();
     const {isFetchedCategories, setIsFetchedCategories} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
@@ -160,8 +160,8 @@ export const GestionCategories = () => {
                     Ajouter une catégorie
                 </Button>
             </div>
-            <div style={{ padding: "20px" }}>
-                <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
+            <div style={{ padding: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <TableContainer component={Paper} sx={{maxHeight: 400, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
                         <TableHead>
                             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
@@ -184,7 +184,7 @@ export const GestionCategories = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center">Aucune catégorie trouvée.</TableCell>
+                                    <TableCell colSpan={3} align="center">Aucune catégorie trouvée.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>

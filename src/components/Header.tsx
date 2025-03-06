@@ -1,10 +1,13 @@
 import {AppBar, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
+import EuroIcon from '@mui/icons-material/Euro';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import {Link} from "react-router";
 import './Header.css';
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
 import {useState} from "react";
 import * as React from "react";
 import {
@@ -71,8 +74,11 @@ export const Header = () => {
                                     >
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-cards" sx={menuItemStyle}><CreditCard sx={{ marginRight: '10px' }} /> Gestion des cartes</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-stands" sx={menuItemStyle}><Storefront sx={{ marginRight: '10px' }} /> Gestion des stands</MenuItem>
-                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-festivaliers" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des festivaliers</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-terminals" sx={menuItemStyle}><PointOfSaleIcon sx={{ marginRight: '10px' }} /> Gestion des terminaux</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-benevoles" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des bénévoles</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-festivaliers" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des festivaliers</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-phones" sx={menuItemStyle}><SmartphoneIcon sx={{ marginRight: '10px' }} /> Gestion des téléphones</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-transactions" sx={menuItemStyle}><EuroIcon sx={{ marginRight: '10px' }} /> Gestion des transactions</MenuItem>
                                     </Menu>
                                 </>}
                             <Link to="/profile">

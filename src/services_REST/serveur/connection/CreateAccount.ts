@@ -4,9 +4,9 @@ import axios, {AxiosError} from "axios";
 const URL_SERVER = parameters.URL_SERVER
 const URL_SIGNUP = parameters.URL_SIGNUP
 
-export const CreateAccount = async(name: string, surname: string, login: string, role: string, password: string, cardNumber: string) => {
+export const CreateAccount = async(name: string, surname: string, login: string, role: string, password: string) => {
     try {
-        const response = await axios.post(`${URL_SERVER}${URL_SIGNUP}`, {name, surname, login, role, password, cardNumber}, {withCredentials: true});
+        const response = await axios.post(`${URL_SERVER}${URL_SIGNUP}`, {name, surname, login, role, password}, {withCredentials: true});
         console.log(response.data)
         return response.data
     } catch (error) {

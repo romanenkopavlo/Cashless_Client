@@ -13,6 +13,10 @@ import {GestionStands} from "./pages/administration/GestionStands.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import {GestionFestivaliers} from "./pages/administration/GestionFestivaliers.tsx";
 import {GestionBenevoles} from "./pages/administration/GestionBenevoles.tsx";
+import {GestionTransactions} from "./pages/administration/GestionTransactions.tsx";
+import {GestionCartes} from "./pages/administration/GestionCartes.tsx";
+import {GestionPhones} from "./pages/administration/GestionPhones.tsx";
+import {GestionTerminaux} from "./pages/administration/GestionTerminaux.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -34,7 +38,11 @@ const router = createBrowserRouter(([
                 element: <AdminRoute/>,
                 children: [
                     {path: "/manage-stands", element: <GestionStands/>},
+                    {path: "/manage-phones", element: <GestionPhones/>},
+                    {path: "/manage-terminals", element: <GestionTerminaux/>},
+                    {path: "/manage-cards", element: <GestionCartes/>},
                     {path: "/manage-festivaliers", element: <GestionFestivaliers/>},
+                    {path: "/manage-transactions", element: <GestionTransactions/>},
                     {path: "/manage-benevoles", element: <GestionBenevoles/>},
                 ]
             }

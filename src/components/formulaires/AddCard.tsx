@@ -4,7 +4,7 @@ import { FaCreditCard } from "react-icons/fa";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {AddCard} from "../../services_REST/serveur/users/AddCard.ts";
 import {ValidationCard} from "./ValidationCard.ts";
-import {useCardStore} from "../../store/CardStore.ts";
+import {useCardStore} from "../../stores/CardStore.ts";
 
 interface FormData {
     cardNumber: number
