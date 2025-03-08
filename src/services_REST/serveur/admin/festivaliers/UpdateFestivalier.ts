@@ -5,10 +5,10 @@ import {AxiosJwt} from "../../../../utils/Axios-JWT.ts";
 
 const URL_UPDATE_FESTIVALIER = parameters.URL_UPDATE_FESTIVALIER
 
-export const UpdateFestivalier = async(id_festivalier: number, nom: string, prenom: string, username: string) => {
+export const UpdateFestivalier = async(id_festivalier: number, nom: string, prenom: string, username: string, role: string | null) => {
     try {
         const axiosJWT = AxiosJwt()
-        const response = await axiosJWT.post(`${URL_UPDATE_FESTIVALIER}`, {id_festivalier, nom, prenom, username});
+        const response = await axiosJWT.post(`${URL_UPDATE_FESTIVALIER}`, {id_festivalier, nom, prenom, username, role});
         console.log(response.data)
         return response.data
     } catch (error) {

@@ -17,7 +17,7 @@ import {useEffect, useState} from "react";
 import { useTerminalsStore } from "../../stores/TerminalsStore.ts";
 import { useStandsStore } from "../../stores/StandsStore.ts";
 import Terminal from "../../models/Terminal.ts";
-import {updateStands} from "../../services/standsServices.ts";
+import {updateStands} from "../../services/stands.ts";
 import {GetTerminals} from "../../services_REST/serveur/admin/terminals/GetTerminals.ts";
 import {UpdateTerminal} from "../../services_REST/serveur/admin/terminals/UpdateTerminal.ts";
 import {DeleteTerminal} from "../../services_REST/serveur/admin/terminals/DeleteTerminal.ts";
@@ -51,9 +51,8 @@ export const GestionTerminaux = () => {
                 });
         }
         if (!isFetchedStands) {
-            setIsFetchedStands(true)
-
-            updateStands(setStands)
+            setIsFetchedStands(true);
+            updateStands(setStands);
         }
     }, [isFetchedStands, isFetchedTerminals, setIsFetchedStands, setIsFetchedTerminals, setStands, setTerminals]);
 

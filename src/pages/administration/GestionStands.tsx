@@ -28,7 +28,7 @@ import {GestionCategories} from "./GestionCategoriesStands.tsx";
 import {useCategoriesStore} from "../../stores/CategoriesStore.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
-import {updateStands} from "../../services/standsServices.ts";
+import {updateStands} from "../../services/stands.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
@@ -48,9 +48,8 @@ export const GestionStands = () => {
 
     useEffect(() => {
         if (!isFetchedStands) {
-            setIsFetchedStands(true)
-
-            updateStands(setStands)
+            setIsFetchedStands(true);
+            updateStands(setStands);
         }
     }, [isFetchedStands, setStands, setIsFetchedStands]);
 

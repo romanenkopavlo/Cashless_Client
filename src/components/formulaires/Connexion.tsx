@@ -3,7 +3,7 @@ import {FaLock, FaUser} from "react-icons/fa";
 import {Box, Container, Typography} from "@mui/material";
 import {useState} from "react";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {useLocation, useNavigate} from "react-router";
+import {Link, useLocation, useNavigate} from "react-router";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
 import {Login} from "../../services_REST/serveur/connection/Login.ts";
 import {useAuthenticationJWTStore} from "../../stores/AuthenticationJWT.ts";
@@ -74,7 +74,7 @@ export const Connexion = () => {
                             </Typography>
                         </Container>}
                         <div className="register-link">
-                            <p>Vous n'avez pas encore de compte? <a href="/signup">S'inscrire</a></p>
+                            <p>Vous n'avez pas encore de compte? <Link to="/signup">S'inscrire</Link></p>
                         </div>
                         {successMessage && (<Container maxWidth="sm" sx={{mt: 5}}>
                             <Box

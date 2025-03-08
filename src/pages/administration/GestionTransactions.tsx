@@ -25,8 +25,8 @@ import {useEffect, useState} from "react";
 import { handleSortByDate } from "../../utils/sortMethods.ts";
 import {RembourserTransaction} from "../../services_REST/serveur/admin/transactions/RembourserTransaction.ts";
 import {useCardsStore} from "../../stores/CardsStore.ts";
-import {updateTransactions} from "../../services/transactionsServices.ts";
-import {updateCards} from "../../services/cardsServices.ts";
+import {updateTransactions} from "../../services/transactions.ts";
+import {updateCards} from "../../services/cards.ts";
 
 export const GestionTransactions = () => {
     const {transactions, setTransactions} = useTransactionsStore();

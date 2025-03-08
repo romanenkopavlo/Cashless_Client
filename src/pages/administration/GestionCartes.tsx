@@ -16,8 +16,8 @@ import { Delete } from "@mui/icons-material";
 import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import { useCardsStore } from "../../stores/CardsStore.ts";
 import {DeleteCard} from "../../services_REST/serveur/admin/cards/DeleteCard.ts";
-import {updateCards} from "../../services/cardsServices.ts";
-import {updateTransactions} from "../../services/transactionsServices.ts";
+import {updateCards} from "../../services/cards.ts";
+import {updateTransactions} from "../../services/transactions.ts";
 import {useTransactionsStore} from "../../stores/TransactionsStore.ts";
 
 export const GestionCartes = () => {

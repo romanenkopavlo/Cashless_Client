@@ -1,7 +1,8 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
-    Button,
+    Alert,
+    Button, Container,
     Dialog, DialogActions, DialogContent,
     DialogTitle, FormControl, InputLabel, MenuItem,
     Paper, Select, SelectChangeEvent,
@@ -12,27 +13,31 @@ import {
     TableHead,
     TableRow, TextField, Typography
 } from "@mui/material";
-import {Delete, Edit} from "@mui/icons-material";
+import {Delete, Edit, ManageAccounts} from "@mui/icons-material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import { useVariablesStore } from "../../stores/VariablesStore.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import Benevole from "../../models/Benevole.ts";
-import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 import {UpdateBenevole} from "../../services_REST/serveur/admin/benevoles/UpdateBenevole.ts";
 import {CreateBenevole} from "../../services_REST/serveur/admin/benevoles/CreateBenevole.ts";
 import {DeleteBenevole} from "../../services_REST/serveur/admin/benevoles/DeleteBenevole.ts";
 import {validateForm} from "../../utils/validateForm.ts";
-import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
 import {useStandsStore} from "../../stores/StandsStore.ts";
+import {updateBenevoles} from "../../services/benevoles.ts";
+import {updateStands} from "../../services/stands.ts";
+import {updateFestivaliers} from "../../services/festivaliers.ts";
+import {useFestivaliersStore} from "../../stores/FestivaliersStore.ts";
 
 export const GestionBenevoles = () => {
     const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevolesStore();
+    const {setFestivaliers} = useFestivaliersStore();
     const {stands, setStands} = useStandsStore();
     const {isFetchedBenevoles, isFetchedStands, setIsFetchedBenevoles, setIsFetchedStands} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
+    const [roleError, setRoleError] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string | null }>({
         nom: null,
         prenom: null,
@@ -45,41 +50,29 @@ export const GestionBenevoles = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Benevole>(new Benevole(0, "", "", "", "", ""));
 
+    const [openRoleDialog, setOpenRoleDialog] = useState(false);
+    const [selectedRole, setSelectedRole] = useState<string>("");
+
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     useEffect(() => {
         if (!isFetchedBenevoles) {
             setIsFetchedBenevoles(true);
-            
-            GetBenevoles()
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
-                        setBenevoles([]);
-                    } else {
-                        setBenevoles(data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des bénévoles:", error);
-                    setBenevoles([]);
-                });
+            updateBenevoles(setBenevoles);
             
             if (!isFetchedStands) {
                 setIsFetchedStands(true);
-
-                GetStands()
-                    .then((data) => {
-                        if (!data || !Array.isArray(data)) {
-                            setStands([]);
-                        } else {
-                            setStands(data);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Erreur lors de la récupération des bénévoles:", error);
-                        setStands([]);
-                    });
+                updateStands(setStands);
             }
         }
     }, [isFetchedBenevoles, isFetchedStands, setBenevoles, setIsFetchedBenevoles, setIsFetchedStands, setStands]);
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => setSuccessMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -147,8 +140,9 @@ export const GestionBenevoles = () => {
         }
 
         if (isEditing) {
-            UpdateBenevole(formData.id, formData.nom, formData.prenom, formData.nom_stand, formData.login)
+            UpdateBenevole(formData.id, formData.nom, formData.prenom, formData.nom_stand, formData.login, null)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     updateBenevole(data.updatedBenevole);
                     handleClose();
                 })
@@ -159,6 +153,7 @@ export const GestionBenevoles = () => {
         } else {
             CreateBenevole(formData.nom, formData.prenom, formData.nom_stand, formData.login, password)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     addBenevole(data.newBenevole);
                     handleClose();
                 })
@@ -171,15 +166,57 @@ export const GestionBenevoles = () => {
 
     const handleDelete = (id: number) => {
         DeleteBenevole(id)
-            .then(() => {
+            .then((data) => {
+                setSuccessMessage(data.message);
                 deleteBenevole(id);
             })
             .catch((error) => console.error("Erreur lors de la suppression des bénévoles:", error));
     };
 
+    const handleOpenRoleDialog = (benevole: Benevole) => {
+        setFormData(benevole);
+        setSelectedRole("Visiteur");
+        setOpenRoleDialog(true);
+    };
+
+    const handleCloseRoleDialog = () => {
+        setOpenRoleDialog(false);
+        setTimeout(() => {
+            setError(null);
+            setRoleError(null);
+            setFormData(new Benevole(0, "", "", "", "", ""));
+        }, 300);
+    };
+
+    const handleRoleSubmit = async () => {
+        if (selectedRole.trim() === "") {
+            setRoleError("Le rôle est obligatoire");
+            return;
+        }
+
+        try {
+            const data = await UpdateBenevole(formData.id, formData.nom, formData.prenom, formData.nom_stand, formData.login, selectedRole);
+            setSuccessMessage(data.message);
+            updateBenevoles(setBenevoles);
+            updateFestivaliers(setFestivaliers);
+            handleClose();
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Erreur lors de la récupération des utilisateurs:", error);
+                setError(error.message);
+            } else {
+                console.error("Erreur inconnue:", error);
+                setError("Une erreur inconnue est survenue.");
+            }
+        }
+
+        setOpenRoleDialog(false);
+    };
+
     return (
         <>
             <Header />
+            <div style={{height: "1065px"}}>
             <div style={{ padding: "20px", textAlign: "center" }}>
                 <Typography variant="h5" sx={{ mt: 1 }}>
                     Gestion des bénévoles
@@ -192,6 +229,17 @@ export const GestionBenevoles = () => {
                     <Typography variant="h6" sx={{ mt: 1 }}>L'ajout d'un bénévole est impossible. Veuillez d'abord ajouter des stands.</Typography>
                 )}
             </div>
+            {successMessage && (
+                <Container maxWidth="xs" sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Alert severity="success">
+                        {successMessage}
+                    </Alert>
+                </Container>
+            )}
             <div style={{ padding: "20px" }}>
                 <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
@@ -215,6 +263,7 @@ export const GestionBenevoles = () => {
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{benevole.login}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{benevole.nom_stand ? benevole.nom_stand : '—'}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
+                                            <Button onClick={() => handleOpenRoleDialog(benevole)}><ManageAccounts sx={{ color: "#7f5656" }} /></Button>
                                             {stands && stands.length > 0 && (<Button onClick={() => handleOpen(true, benevole)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(benevole.id)} color="error"><Delete /></Button>
                                         </TableCell>
@@ -277,6 +326,39 @@ export const GestionBenevoles = () => {
                     <Button onClick={handleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">{isEditing ? "Modifier" : "Ajouter"}</Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog open={openRoleDialog} onClose={handleCloseRoleDialog}>
+                <DialogTitle>Changer le rôle</DialogTitle>
+                <DialogContent>
+                    <FormControl fullWidth margin="dense" sx={styleCustom} error={!!roleError}>
+                        <InputLabel id="role-label">Rôle</InputLabel>
+                        <Select
+                            label="Rôle"
+                            name="nom_role"
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                        >
+                            <MenuItem value="Visiteur">Visiteur</MenuItem>
+                            <MenuItem value="Administrateur">Administrateur</MenuItem>
+                        </Select>
+                        {roleError && (
+                            <Typography color="error" variant="caption" sx={{mt: 0.5}}>
+                                {roleError}
+                            </Typography>
+                        )}
+                    </FormControl>
+                    {error && (
+                        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                            {error}
+                        </Typography>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseRoleDialog} sx={{color: "#7f5656"}}>Annuler</Button>
+                    <Button onClick={handleRoleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">Modifier</Button>
+                </DialogActions>
+            </Dialog>
+            </div>
             <Footer />
         </>
     )
