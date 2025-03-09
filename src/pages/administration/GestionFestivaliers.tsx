@@ -210,7 +210,7 @@ export const GestionFestivaliers = () => {
             setSuccessMessage(data.message);
             updateFestivaliers(setFestivaliers);
             updateBenevoles(setBenevoles);
-            if (!isFetchedBenevoles) setIsFetchedBenevoles(true)
+            if (!isFetchedBenevoles) setIsFetchedBenevoles(true);
             handleClose();
         } catch (error) {
             if (error instanceof Error) {
