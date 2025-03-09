@@ -39,7 +39,7 @@ export const GestionFestivaliers = () => {
     const {setBenevoles} = useBenevolesStore();
     const {setCards} = useCardsStore();
     const {setTransactions} = useTransactionsStore();
-    const {isFetchedVisitors, setIsFetchedVisitors} = useVariablesStore();
+    const {isFetchedVisitors, isFetchedBenevoles, isFetchedCards, isFetchedTransactions, setIsFetchedVisitors, setIsFetchedBenevoles, setIsFetchedCards, setIsFetchedTransactions} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
@@ -136,9 +136,14 @@ export const GestionFestivaliers = () => {
             try {
                 const data = await UpdateFestivalier(formData.id, formData.nom, formData.prenom, formData.login, null)
                 setSuccessMessage(data.message);
+
                 updateFestivalier(data.updatedFestivalier);
                 updateTransactions(setTransactions);
                 updateCards(setCards);
+
+                if (!isFetchedTransactions) setIsFetchedTransactions(true);
+                if (!isFetchedCards) setIsFetchedCards(true);
+
                 handleClose();
             } catch (error) {
                 if (error instanceof Error) {
@@ -165,12 +170,15 @@ export const GestionFestivaliers = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            const data = await DeleteFestivalier(id)
-            setSuccessMessage(data.message)
-            deleteFestivalier(id)
+            const data = await DeleteFestivalier(id);
+            setSuccessMessage(data.message);
+            deleteFestivalier(id);
 
-            updateTransactions(setTransactions)
-            updateCards(setCards)
+            updateTransactions(setTransactions);
+            updateCards(setCards);
+
+            if (!isFetchedTransactions) setIsFetchedTransactions(true);
+            if (!isFetchedCards) setIsFetchedCards(true);
         } catch (error) {
             console.error("Erreur lors de la suppression des festivaliers:", error)
         }
@@ -202,6 +210,7 @@ export const GestionFestivaliers = () => {
             setSuccessMessage(data.message);
             updateFestivaliers(setFestivaliers);
             updateBenevoles(setBenevoles);
+            if (!isFetchedBenevoles) setIsFetchedBenevoles(true)
             handleClose();
         } catch (error) {
             if (error instanceof Error) {

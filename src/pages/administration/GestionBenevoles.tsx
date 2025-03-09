@@ -33,7 +33,7 @@ export const GestionBenevoles = () => {
     const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevolesStore();
     const {setFestivaliers} = useFestivaliersStore();
     const {stands, setStands} = useStandsStore();
-    const {isFetchedBenevoles, isFetchedStands, setIsFetchedBenevoles, setIsFetchedStands} = useVariablesStore();
+    const {isFetchedBenevoles, isFetchedStands, isFetchedVisitors, setIsFetchedBenevoles, setIsFetchedStands, setIsFetchedVisitors} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
@@ -59,11 +59,10 @@ export const GestionBenevoles = () => {
         if (!isFetchedBenevoles) {
             setIsFetchedBenevoles(true);
             updateBenevoles(setBenevoles);
-            
-            if (!isFetchedStands) {
-                setIsFetchedStands(true);
-                updateStands(setStands);
-            }
+        }
+        if (!isFetchedStands) {
+            setIsFetchedStands(true);
+            updateStands(setStands);
         }
     }, [isFetchedBenevoles, isFetchedStands, setBenevoles, setIsFetchedBenevoles, setIsFetchedStands, setStands]);
 
@@ -197,8 +196,9 @@ export const GestionBenevoles = () => {
         try {
             const data = await UpdateBenevole(formData.id, formData.nom, formData.prenom, formData.nom_stand, formData.login, selectedRole);
             setSuccessMessage(data.message);
-            updateBenevoles(setBenevoles);
             updateFestivaliers(setFestivaliers);
+            updateBenevoles(setBenevoles);
+            if (!isFetchedVisitors) setIsFetchedVisitors(true);
             handleClose();
         } catch (error) {
             if (error instanceof Error) {
