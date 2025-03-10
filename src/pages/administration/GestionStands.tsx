@@ -29,6 +29,7 @@ import {useCategoriesStore} from "../../stores/CategoriesStore.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 import {updateStands} from "../../services/stands.ts";
+import {Link} from "react-router";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
@@ -194,6 +195,7 @@ export const GestionStands = () => {
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nom</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Solde (€)</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Catégorie</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nombre de bénévoles</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -205,6 +207,7 @@ export const GestionStands = () => {
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_stand}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{stand.solde}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_categorie ? stand.nom_categorie : '—'}</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}><Link to="/listes-benevoles" style={{color: "#7f5656"}}>20</Link></TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             {categories && categories.length > 0 && (<Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(stand.id_stand)} color="error"><Delete /></Button>
@@ -213,7 +216,7 @@ export const GestionStands = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center">Aucun stand trouvé.</TableCell>
+                                    <TableCell colSpan={6} align="center">Aucun stand trouvé.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
