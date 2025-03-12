@@ -94,7 +94,7 @@ export const GestionPhones = () => {
             setIsEditing(false);
             setError(null);
             setModeleError(null);
-            setModeleError(null);
+            setMarqueError(null);
         }, 300);
     };
 

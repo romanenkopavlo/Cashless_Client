@@ -24,6 +24,7 @@
   "URL_CREATE_BENEVOLE": "/api/admin/benevoles/createBenevole",
   "URL_UPDATE_BENEVOLE": "/api/admin/benevoles/updateBenevole",
   "URL_DELETE_BENEVOLE": "/api/admin/benevoles/deleteBenevole",
+  "URL_AFFECTATION_BENEVOLE": "/api/admin/benevoles/affecterBenevole",
 
   "URL_GET_CATEGORIES": "/api/admin/categories/getCategories",
   "URL_CREATE_CATEGORY": "/api/admin/categories/createCategory",

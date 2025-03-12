@@ -17,6 +17,7 @@ import {GestionTransactions} from "./pages/administration/GestionTransactions.ts
 import {GestionCartes} from "./pages/administration/GestionCartes.tsx";
 import {GestionPhones} from "./pages/administration/GestionPhones.tsx";
 import {GestionTerminaux} from "./pages/administration/GestionTerminaux.tsx";
+import {ListeDesBenevoles} from "./pages/administration/ListeDesBenevoles.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -37,6 +38,7 @@ const router = createBrowserRouter(([
             {
                 element: <AdminRoute/>,
                 children: [
+                    {path: "/listes-benevoles", element: <ListeDesBenevoles/>},
                     {path: "/manage-stands", element: <GestionStands/>},
                     {path: "/manage-phones", element: <GestionPhones/>},
                     {path: "/manage-terminals", element: <GestionTerminaux/>},

@@ -14,8 +14,21 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle, Typography, InputLabel, Select, MenuItem, FormControl, SelectChangeEvent
+    DialogTitle,
+    Typography,
+    InputLabel,
+    Select,
+    MenuItem,
+    FormControl,
+    SelectChangeEvent,
+    ListItemText,
+    Grid2,
+    List, ListItem, IconButton
 } from "@mui/material";
+import PeopleIcon from "@mui/icons-material/People";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { Edit, Delete } from "@mui/icons-material";
 import Stand from "../../models/Stand.ts";
 import * as React from "react";
@@ -29,7 +42,8 @@ import {useCategoriesStore} from "../../stores/CategoriesStore.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 import {updateStands} from "../../services/stands.ts";
-import {Link} from "react-router";
+import Benevole from "../../models/Benevole.ts";
+import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
@@ -45,7 +59,12 @@ export const GestionStands = () => {
 
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<Stand>(new Stand(0, "", 0, ""));
+    const [formData, setFormData] = useState<Stand>(new Stand(0, "", 0, "", 0));
+
+    const [openBenevolesDialog, setOpenBenevolesDialog] = useState(false);
+    const [selectedStand, setSelectedStand] = useState<Stand | null>(null);
+    const [standBenevoles, setStandBenevoles] = useState<Benevole[]>([]);
+    const [unassignedBenevoles, setUnassignedBenevoles] = useState<Benevole[]>([]);
 
     useEffect(() => {
         if (!isFetchedStands) {
@@ -79,7 +98,7 @@ export const GestionStands = () => {
         if (editing && stand) {
             setFormData(stand);
         } else {
-            setFormData(new Stand(0, "", 0, ""));
+            setFormData(new Stand(0, "", 0, "", 0));
         }
         setOpen(true);
     };
@@ -87,7 +106,7 @@ export const GestionStands = () => {
     const handleClose = () => {
         setOpen(false);
         setTimeout(() => {
-            setFormData(new Stand(0, "", 0, ""));
+            setFormData(new Stand(0, "", 0, "", 0));
             setIsEditing(false);
             setError(null);
             setSoldeError(null);
@@ -170,6 +189,62 @@ export const GestionStands = () => {
             .catch((error) => console.error("Erreur lors de la suppression des stands:", error));
     };
 
+    const handleOpenBenevolesDialog = (stand: Stand) => {
+        setSelectedStand(stand);
+
+        GetBenevoles().then((benevoles) => {
+            console.log("benevoles")
+            console.log(benevoles)
+            if (benevoles && Array.isArray(benevoles)) {
+                const assigned = benevoles.filter(b => b.ids_stands && b.ids_stands.split(', ').includes(String(stand.id_stand))).map(b => b);
+                const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(', ').includes(String(stand.id_stand))).map(b => b);
+
+                console.log(assigned)
+                console.log(unassigned)
+
+                setStandBenevoles(assigned);
+                setUnassignedBenevoles(unassigned);
+            }
+        });
+
+        setOpenBenevolesDialog(true);
+    };
+
+    const handleAddBenevole = async (benevoleLogin: string) => {
+        try {
+
+            await AffectationBenevole(selectedStand?.id_stand, benevoleLogin, "add");
+
+            GetBenevoles().then((benevoles) => {
+                if (benevoles && Array.isArray(benevoles)) {
+                    const assigned = benevoles.filter(b => b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
+                    const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
+                    setStandBenevoles(assigned);
+                    setUnassignedBenevoles(unassigned);
+                }
+            });
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du bénévole", error);
+        }
+    };
+
+    const handleRemoveBenevole = async (benevoleLogin: string) => {
+        try {
+            await AffectationBenevole(selectedStand?.id_stand, benevoleLogin, "remove");
+
+            GetBenevoles().then((benevoles) => {
+                if (benevoles && Array.isArray(benevoles)) {
+                    const assigned = benevoles.filter(b => b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
+                    const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
+                    setStandBenevoles(assigned);
+                    setUnassignedBenevoles(unassigned);
+                }
+            });
+        } catch (error) {
+            console.error("Erreur lors de la suppression du bénévole", error);
+        }
+    };
+
     return (
         <>
             <Header />
@@ -207,7 +282,19 @@ export const GestionStands = () => {
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_stand}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{stand.solde}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_categorie ? stand.nom_categorie : '—'}</TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}><Link to="/listes-benevoles" style={{color: "#7f5656"}}>20</Link></TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}><Button
+                                            onClick={() => handleOpenBenevolesDialog(stand)}
+                                            sx={{
+                                            color: "#7f5656",
+                                                textDecoration: "underline",
+                                                background: "none",
+                                                border: "none",
+                                                padding: 0,
+                                                minWidth: "auto"
+                                            }}
+                                        >
+                                            {stand.nombre_benevoles}
+                                        </Button></TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             {categories && categories.length > 0 && (<Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(stand.id_stand)} color="error"><Delete /></Button>
@@ -268,6 +355,119 @@ export const GestionStands = () => {
                 <DialogActions>
                     <Button onClick={handleClose} sx={{color: "#7f5656"}}>Annuler</Button>
                     <Button onClick={handleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">{isEditing ? "Modifier" : "Ajouter"}</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openBenevolesDialog} onClose={() => setOpenBenevolesDialog(false)} maxWidth="md" fullWidth>
+                <DialogTitle
+                    sx={{
+                        bgcolor: "#7f5656",
+                        color: "white",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        py: 2,
+                        borderTopLeftRadius: 2,
+                        borderTopRightRadius: 2
+                    }}
+                >
+                    Bénévoles pour {selectedStand?.nom_stand}
+                </DialogTitle>
+
+                <DialogContent dividers sx={{ p: 4, bgcolor: "#fafafa" }}>
+                    <Grid2 container spacing={4} justifyContent="center" alignItems="stretch">
+                        <Grid2 display="flex" flexDirection="column" height="100%">
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                            >
+                                <PeopleIcon fontSize="small" /> Bénévoles dans ce stand
+                            </Typography>
+                            <Paper sx={{
+                                p: 2,
+                                flex: 1,
+                                overflowY: "auto",
+                                border: "1px solid #ddd",
+                                borderRadius: 2,
+                                boxShadow: 1,
+                                bgcolor: "white",
+                                minHeight: 80,
+                                maxHeight: 250,
+                            }}>
+                                {standBenevoles.length > 0 ? (
+                                    <List dense>
+                                        {standBenevoles.map((benevole, id) => (
+                                            <ListItem
+                                                key={id}
+                                                sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
+                                            >
+                                                <ListItemText primary={benevole.nom + " " + benevole.prenom + " " + benevole.login} />
+                                                <IconButton color="inherit" onClick={() => handleRemoveBenevole(benevole.login)}><RemoveCircleOutlineIcon/></IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center", py: 2 }}>
+                                        Aucun bénévole assigné.
+                                    </Typography>
+                                )}
+                            </Paper>
+                        </Grid2>
+
+                        <Grid2 display="flex" flexDirection="column" height="100%">
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                            >
+                                <PersonAddIcon fontSize="small" /> Bénévoles non assignés
+                            </Typography>
+                            <Paper sx={{
+                                p: 2,
+                                flex: 1,
+                                overflowY: "auto",
+                                border: "1px solid #ddd",
+                                borderRadius: 2,
+                                boxShadow: 1,
+                                bgcolor: "white",
+                                minHeight: 80,
+                                maxHeight: 250,
+                            }}>
+                                {unassignedBenevoles.length > 0 ? (
+                                    <List dense>
+                                        {unassignedBenevoles.map((benevole, id) => (
+                                            <ListItem
+                                                key={id}
+                                                sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
+                                            >
+                                                <ListItemText primary={benevole.nom + " " + benevole.prenom + " " + benevole.login} />
+                                                <IconButton color="inherit" onClick={() => handleAddBenevole(benevole.login)}><AddCircleOutlineIcon/></IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center", py: 2 }}>
+                                        Tous les bénévoles sont assignés.
+                                    </Typography>
+                                )}
+                            </Paper>
+                        </Grid2>
+                    </Grid2>
+                </DialogContent>
+
+                <DialogActions sx={{ justifyContent: "center", pb: 2, bgcolor: "#fafafa" }}>
+                    <Button
+                        onClick={() => setOpenBenevolesDialog(false)}
+                        sx={{
+                            bgcolor: "#7f5656",
+                            color: "white",
+                            "&:hover": { bgcolor: "#5e3d3d" },
+                            px: 3,
+                            py: 1.2,
+                            borderRadius: 2,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        Fermer
+                    </Button>
                 </DialogActions>
             </Dialog>
             </div>
