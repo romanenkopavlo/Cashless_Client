@@ -385,7 +385,7 @@ export const GestionStands = () => {
 
                 <DialogContent dividers sx={{ p: 4, bgcolor: "#fafafa" }}>
                     <Grid2 container spacing={4} justifyContent="center" alignItems="stretch">
-                        <Grid2 display="flex" flexDirection="column" height="100%">
+                        <Grid2 display="flex" flexDirection="column" height="100%" sx={{ alignItems: "center" }}>
                             <Typography
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
@@ -402,6 +402,8 @@ export const GestionStands = () => {
                                 bgcolor: "white",
                                 minHeight: 80,
                                 maxHeight: 250,
+                                minWidth: 300,
+                                maxWidth: 320
                             }}>
                                 {standBenevoles.length > 0 ? (
                                     <List dense>
@@ -423,7 +425,7 @@ export const GestionStands = () => {
                             </Paper>
                         </Grid2>
 
-                        <Grid2 display="flex" flexDirection="column" height="100%">
+                        <Grid2 display="flex" flexDirection="column" height="100%" sx={{ alignItems: "center" }}>
                             <Typography
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
@@ -440,6 +442,8 @@ export const GestionStands = () => {
                                 bgcolor: "white",
                                 minHeight: 80,
                                 maxHeight: 250,
+                                minWidth: 300,
+                                maxWidth: 320
                             }}>
                                 {unassignedBenevoles.length > 0 ? (
                                     <List dense>
