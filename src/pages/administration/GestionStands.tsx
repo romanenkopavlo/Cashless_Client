@@ -23,7 +23,7 @@ import {
     SelectChangeEvent,
     ListItemText,
     Grid2,
-    List, ListItem, IconButton
+    List, ListItem, IconButton, Container, Alert
 } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -44,6 +44,7 @@ import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenev
 import {updateStands} from "../../services/stands.ts";
 import Benevole from "../../models/Benevole.ts";
 import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
+import {separerBenevoles} from "../../services/benevoles.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
@@ -66,12 +67,21 @@ export const GestionStands = () => {
     const [standBenevoles, setStandBenevoles] = useState<Benevole[]>([]);
     const [unassignedBenevoles, setUnassignedBenevoles] = useState<Benevole[]>([]);
 
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     useEffect(() => {
         if (!isFetchedStands) {
             setIsFetchedStands(true);
             updateStands(setStands);
         }
     }, [isFetchedStands, setStands, setIsFetchedStands]);
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => setSuccessMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -191,64 +201,50 @@ export const GestionStands = () => {
 
     const handleOpenBenevolesDialog = (stand: Stand) => {
         setSelectedStand(stand);
-
-        GetBenevoles().then((benevoles) => {
-            console.log("benevoles")
-            console.log(benevoles)
-            if (benevoles && Array.isArray(benevoles)) {
-                const assigned = benevoles.filter(b => b.ids_stands && b.ids_stands.split(', ').includes(String(stand.id_stand))).map(b => b);
-                const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(', ').includes(String(stand.id_stand))).map(b => b);
-
-                console.log(assigned)
-                console.log(unassigned)
-
-                setStandBenevoles(assigned);
-                setUnassignedBenevoles(unassigned);
-            }
-        });
-
+        separerBenevoles(stand, setBenevoles, setStandBenevoles, setUnassignedBenevoles);
         setOpenBenevolesDialog(true);
     };
 
-    const handleAddBenevole = async (benevoleLogin: string) => {
+    const handleAffectBenevole = async (benevole_id: number) => {
         try {
+            const data = await AffectationBenevole(selectedStand?.id_stand, benevole_id, "add");
 
-            await AffectationBenevole(selectedStand?.id_stand, benevoleLogin, "add");
-
-            GetBenevoles().then((benevoles) => {
-                if (benevoles && Array.isArray(benevoles)) {
-                    const assigned = benevoles.filter(b => b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
-                    const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
-                    setStandBenevoles(assigned);
-                    setUnassignedBenevoles(unassigned);
-                }
-            });
+            setSuccessMessage(data.message);
+            separerBenevoles(selectedStand, setBenevoles, setStandBenevoles, setUnassignedBenevoles);
+            updateStands(setStands)
         } catch (error) {
-            console.error("Erreur lors de l'ajout du bénévole", error);
+            if (error instanceof Error) {
+                console.error("Erreur lors de l'affecation du bénévole:", error);
+                setError(error.message);
+            } else {
+                console.error("Erreur inconnue:", error);
+                setError("Une erreur inconnue est survenue.");
+            }
         }
     };
 
-    const handleRemoveBenevole = async (benevoleLogin: string) => {
+    const handleDisaffectBenevole = async (benevole_id: number) => {
         try {
-            await AffectationBenevole(selectedStand?.id_stand, benevoleLogin, "remove");
+            const data = await AffectationBenevole(selectedStand?.id_stand, benevole_id, "remove");
 
-            GetBenevoles().then((benevoles) => {
-                if (benevoles && Array.isArray(benevoles)) {
-                    const assigned = benevoles.filter(b => b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
-                    const unassigned = benevoles.filter(b => !b.ids_stands || !b.ids_stands.split(',').includes(String(selectedStand?.id_stand))).map(b => b.login);
-                    setStandBenevoles(assigned);
-                    setUnassignedBenevoles(unassigned);
-                }
-            });
+            setSuccessMessage(data.message);
+            separerBenevoles(selectedStand, setBenevoles, setStandBenevoles, setUnassignedBenevoles);
+            updateStands(setStands)
         } catch (error) {
-            console.error("Erreur lors de la suppression du bénévole", error);
+            if (error instanceof Error) {
+                console.error("Erreur lors de la désaffecation du bénévole:", error);
+                setError(error.message);
+            } else {
+                console.error("Erreur inconnue:", error);
+                setError("Une erreur inconnue est survenue.");
+            }
         }
     };
 
     return (
         <>
             <Header />
-            <div style={{height: "1065px"}}>
+            <div style={{height: "1100px"}}>
             <div style={{padding: "20px", textAlign: "center" }}>
                 <Typography variant="h5" sx={{ mt: 1 }}>
                     Gestion des stands
@@ -358,7 +354,7 @@ export const GestionStands = () => {
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={openBenevolesDialog} onClose={() => setOpenBenevolesDialog(false)} maxWidth="md" fullWidth>
+            <Dialog open={openBenevolesDialog} maxWidth="md" fullWidth>
                 <DialogTitle
                     sx={{
                         bgcolor: "#7f5656",
@@ -372,6 +368,20 @@ export const GestionStands = () => {
                 >
                     Bénévoles pour {selectedStand?.nom_stand}
                 </DialogTitle>
+
+                {successMessage && (
+                    <Container maxWidth="xs" sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        mt: 2,
+                        mb: 2
+                    }}>
+                        <Alert severity="success">
+                            {successMessage}
+                        </Alert>
+                    </Container>
+                )}
 
                 <DialogContent dividers sx={{ p: 4, bgcolor: "#fafafa" }}>
                     <Grid2 container spacing={4} justifyContent="center" alignItems="stretch">
@@ -401,7 +411,7 @@ export const GestionStands = () => {
                                                 sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
                                             >
                                                 <ListItemText primary={benevole.nom + " " + benevole.prenom + " " + benevole.login} />
-                                                <IconButton color="inherit" onClick={() => handleRemoveBenevole(benevole.login)}><RemoveCircleOutlineIcon/></IconButton>
+                                                <IconButton color="inherit" onClick={() => handleDisaffectBenevole(benevole.id)}><RemoveCircleOutlineIcon/></IconButton>
                                             </ListItem>
                                         ))}
                                     </List>
@@ -439,7 +449,7 @@ export const GestionStands = () => {
                                                 sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
                                             >
                                                 <ListItemText primary={benevole.nom + " " + benevole.prenom + " " + benevole.login} />
-                                                <IconButton color="inherit" onClick={() => handleAddBenevole(benevole.login)}><AddCircleOutlineIcon/></IconButton>
+                                                <IconButton color="inherit" onClick={() => handleAffectBenevole(benevole.id)}><AddCircleOutlineIcon/></IconButton>
                                             </ListItem>
                                         ))}
                                     </List>
@@ -455,7 +465,10 @@ export const GestionStands = () => {
 
                 <DialogActions sx={{ justifyContent: "center", pb: 2, bgcolor: "#fafafa" }}>
                     <Button
-                        onClick={() => setOpenBenevolesDialog(false)}
+                        onClick={() => {
+                            setSuccessMessage(null);
+                            setOpenBenevolesDialog(false);
+                        }}
                         sx={{
                             bgcolor: "#7f5656",
                             color: "white",

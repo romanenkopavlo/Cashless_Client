@@ -4,7 +4,7 @@ import {
     Alert,
     Button, Container,
     Dialog, DialogActions, DialogContent,
-    DialogTitle, FormControl, InputLabel, MenuItem,
+    DialogTitle, FormControl, Grid2, IconButton, InputLabel, List, ListItem, ListItemText, MenuItem,
     Paper, Select, Snackbar,
     Table,
     TableBody,
@@ -26,10 +26,20 @@ import {validateForm} from "../../utils/validateForm.ts";
 import {updateBenevoles} from "../../services/benevoles.ts";
 import {updateFestivaliers} from "../../services/festivaliers.ts";
 import {useFestivaliersStore} from "../../stores/FestivaliersStore.ts";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
+import {separerStands} from "../../services/stands.ts";
+import {useStandsStore} from "../../stores/StandsStore.ts";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import PeopleIcon from "@mui/icons-material/People";
+import Stand from "../../models/Stand.ts";
+import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 
 export const GestionBenevoles = () => {
     const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevolesStore();
     const {setFestivaliers} = useFestivaliersStore();
+    const {setStands} = useStandsStore();
     const {isFetchedBenevoles, isFetchedVisitors, setIsFetchedBenevoles, setIsFetchedVisitors} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
@@ -51,6 +61,13 @@ export const GestionBenevoles = () => {
     const [selectedRole, setSelectedRole] = useState<string>("");
 
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [successAffMessage, setSuccessAffMessage] = useState<string | null>(null);
+    
+    const [openStandsDialog, setOpenStandsDialog] = useState(false);
+    const [selectedBenevole, setSelectedBenevole] = useState<Benevole | null>(null);
+
+    const [benevoleStands, setBenevoleStands] = useState<Stand[]>([]);
+    const [unassignedStands, setUnassignedStands] = useState<Stand[]>([]);
 
     useEffect(() => {
         if (!isFetchedBenevoles) {
@@ -64,7 +81,11 @@ export const GestionBenevoles = () => {
             const timer = setTimeout(() => setSuccessMessage(null), 3000);
             return () => clearTimeout(timer);
         }
-    }, [successMessage]);
+        if (successAffMessage) {
+            const timer = setTimeout(() => setSuccessAffMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, successAffMessage]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -210,6 +231,56 @@ export const GestionBenevoles = () => {
         setOpenRoleDialog(false);
     };
 
+    const handleOpenStandsDialog = (benevole : Benevole) => {
+        setSelectedBenevole(benevole);
+        separerStands(benevole, setStands, setBenevoleStands, setUnassignedStands);
+        setOpenStandsDialog(true);
+    };
+
+    const handleAffectStand = async (id_stand: number) => {
+        try {
+            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "add");
+
+            setSuccessAffMessage(data.message);
+
+            const benevoles = await GetBenevoles();
+            useBenevolesStore.getState().setBenevoles(benevoles);
+            const updatedBenevole = useBenevolesStore.getState().benevoles.find(benevole => benevole.id === selectedBenevole?.id);
+
+            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Erreur lors de l'affecation du bénévole:", error);
+                setError(error.message);
+            } else {
+                console.error("Erreur inconnue:", error);
+                setError("Une erreur inconnue est survenue.");
+            }
+        }
+    };
+
+    const handleDisaffectStand = async (id_stand: number) => {
+        try {
+            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "remove");
+
+            setSuccessAffMessage(data.message);
+
+            const benevoles = await GetBenevoles();
+            useBenevolesStore.getState().setBenevoles(benevoles);
+            const updatedBenevole = useBenevolesStore.getState().benevoles.find(benevole => benevole.id === selectedBenevole?.id);
+
+            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Erreur lors de la désaffecation du bénévole:", error);
+                setError(error.message);
+            } else {
+                console.error("Erreur inconnue:", error);
+                setError("Une erreur inconnue est survenue.");
+            }
+        }
+    };
+
     return (
         <>
             <Header />
@@ -254,7 +325,20 @@ export const GestionBenevoles = () => {
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{benevole.nom}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{benevole.prenom}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{benevole.login}</TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{benevole.noms_stands ? benevole.noms_stands : '—'}</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>
+                                                <Button
+                                                    onClick={() => handleOpenStandsDialog(benevole)}
+                                                    sx={{
+                                                    color: "#7f5656",
+                                                    textDecoration: "underline",
+                                                    background: "none",
+                                                    border: "none",
+                                                    padding: 0,
+                                                    }}
+                                                >
+                                                    Voir stands
+                                                </Button>
+                                        </TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             <Button onClick={() => handleOpenRoleDialog(benevole)}><ManageAccounts sx={{ color: "#7f5656" }} /></Button>
                                             <Button onClick={() => handleOpen(true, benevole)}><Edit sx={{color: "#7f5656"}}/></Button>
@@ -323,6 +407,135 @@ export const GestionBenevoles = () => {
                 </DialogActions>
             </Dialog>
 
+            <Dialog open={openStandsDialog} maxWidth="md" fullWidth>
+                <DialogTitle
+                    sx={{
+                        bgcolor: "#7f5656",
+                        color: "white",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        py: 2,
+                        borderTopLeftRadius: 2,
+                        borderTopRightRadius: 2
+                    }}
+                >
+                    Stands du bénévole: {selectedBenevole?.login}
+                </DialogTitle>
+
+                {successAffMessage && (
+                    <Container maxWidth="xs" sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        mt: 2,
+                        mb: 2
+                    }}>
+                        <Alert severity="success">
+                            {successAffMessage}
+                        </Alert>
+                    </Container>
+                )}
+
+                <DialogContent dividers sx={{ p: 4, bgcolor: "#fafafa" }}>
+                    <Grid2 container spacing={4} justifyContent="center" alignItems="stretch">
+                        <Grid2 display="flex" flexDirection="column" height="100%">
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                            >
+                                <PeopleIcon fontSize="small" /> Stands du bénévole
+                            </Typography>
+                            <Paper sx={{
+                                p: 2,
+                                flex: 1,
+                                overflowY: "auto",
+                                border: "1px solid #ddd",
+                                borderRadius: 2,
+                                boxShadow: 1,
+                                bgcolor: "white",
+                                minHeight: 80,
+                                maxHeight: 250,
+                            }}>
+                                {benevoleStands.length > 0 ? (
+                                    <List dense>
+                                        {benevoleStands.map((stand, id) => (
+                                            <ListItem
+                                                key={id}
+                                                sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
+                                            >
+                                                <ListItemText primary={stand.nom_stand} />
+                                                <IconButton color="inherit" onClick={() => handleDisaffectStand(stand.id_stand)}><RemoveCircleOutlineIcon/></IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center", py: 2 }}>
+                                        Aucun stand assigné.
+                                    </Typography>
+                                )}
+                            </Paper>
+                        </Grid2>
+
+                        <Grid2 display="flex" flexDirection="column" height="100%">
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                            >
+                                <PersonAddIcon fontSize="small" /> Stands non assignés
+                            </Typography>
+                            <Paper sx={{
+                                p: 2,
+                                flex: 1,
+                                overflowY: "auto",
+                                border: "1px solid #ddd",
+                                borderRadius: 2,
+                                boxShadow: 1,
+                                bgcolor: "white",
+                                minHeight: 80,
+                                maxHeight: 250,
+                            }}>
+                                {unassignedStands.length > 0 ? (
+                                    <List dense>
+                                        {unassignedStands.map((stand, id) => (
+                                            <ListItem
+                                                key={id}
+                                                sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
+                                            >
+                                                <ListItemText primary={stand.nom_stand} />
+                                                <IconButton color="inherit" onClick={() => handleAffectStand(stand.id_stand)}><AddCircleOutlineIcon/></IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center", py: 2 }}>
+                                        Tous les stands sont assignés.
+                                    </Typography>
+                                )}
+                            </Paper>
+                        </Grid2>
+                    </Grid2>
+                </DialogContent>
+
+                <DialogActions sx={{ justifyContent: "center", pb: 2, bgcolor: "#fafafa" }}>
+                    <Button
+                        onClick={() => {
+                            setSuccessAffMessage(null);
+                            setOpenStandsDialog(false);
+                        }}
+                        sx={{
+                            bgcolor: "#7f5656",
+                            color: "white",
+                            "&:hover": { bgcolor: "#5e3d3d" },
+                            px: 3,
+                            py: 1.2,
+                            borderRadius: 2,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        Fermer
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Snackbar
                 open={openSnackbar}
                 autoHideDuration={6000}

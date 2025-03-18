@@ -163,7 +163,7 @@ export const GestionPhones = () => {
     return (
         <>
             <Header />
-            <div style={{height: "1065px"}}>
+            <div style={{height: "1100px"}}>
                 <div style={{padding: "20px", textAlign: "center" }}>
                     <Typography variant="h5" sx={{ mt: 1 }}>
                         Gestion des téléphones

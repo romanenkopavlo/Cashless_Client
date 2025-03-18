@@ -63,7 +63,9 @@ export const GestionTransactions = () => {
 
     const getColorByType = (type: string) => {
         switch (type) {
-            case 'Annulation':
+            case 'Annulation de crédit':
+                return 'grey';
+            case 'Annulation de débit':
                 return 'grey';
             case 'Remboursement':
                 return 'blue';
@@ -112,7 +114,7 @@ export const GestionTransactions = () => {
     return (
         <>
             <Header/>
-            <div style={{height: "1065px"}}>
+            <div style={{height: "1100px"}}>
                 <div style={{padding: "20px", textAlign: "center" }}>
                     <Typography variant="h5" sx={{ mt: 1 }}>
                         Gestion des transactions
@@ -138,10 +140,11 @@ export const GestionTransactions = () => {
                             label="Filtrer par type"
                         >
                             <MenuItem value="Tous">Tous</MenuItem>
-                            <MenuItem value="Crédit">Crédit</MenuItem>
                             <MenuItem value="Débit">Débit</MenuItem>
-                            <MenuItem value="Annulation">Annulation</MenuItem>
+                            <MenuItem value="Crédit">Crédit</MenuItem>
                             <MenuItem value="Remboursement">Remboursement</MenuItem>
+                            <MenuItem value="Annulation de débit">Annulation de débit</MenuItem>
+                            <MenuItem value="Annulation de crédit">Annulation de crédit</MenuItem>
                         </Select>
                     </FormControl>
                 </div>
@@ -179,7 +182,7 @@ export const GestionTransactions = () => {
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.nom_stand ? transaction.nom_stand : '—'}</TableCell>
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.marque_terminal ? transaction.marque_terminal : '—'} {transaction.modele_terminal ? transaction.modele_terminal : '—'}</TableCell>
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
-                                                {(transaction.type === 'Annulation' || transaction.type === 'Remboursement' || transaction.type === 'Crédit') && (
+                                                {(transaction.type === 'Annulation de crédit' || transaction.type === 'Annulation de débit' || transaction.type === 'Remboursement' || transaction.type === 'Crédit') && (
                                                     <>—</>
                                                 )}
                                                 {transaction.type === 'Débit' && (
@@ -201,55 +204,6 @@ export const GestionTransactions = () => {
                         </Table>
                     </TableContainer>
                 </div>
-
-                {/*<Dialog open={open} onClose={handleClose}>*/}
-                {/*    <DialogTitle>{isEditing ? "Modifier le bénévole" : "Ajouter un bénévole"}</DialogTitle>*/}
-                {/*    <DialogContent>*/}
-                {/*        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Nom" name="nom" value={formData.nom} onChange={handleChange} error={!!errors.nom} helperText={errors.nom}/>*/}
-                {/*        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Prénom" name="prenom" value={formData.prenom} onChange={handleChange} error={!!errors.prenom} helperText={errors.prenom}/>*/}
-                {/*        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Login" name="login" value={formData.login} onChange={handleChange} error={!!errors.username} helperText={errors.username}/>*/}
-                {/*        <FormControl fullWidth margin="dense" sx={styleCustom} error={!!errors.nom_stand}>*/}
-                {/*            <InputLabel id="stand-label">Stand</InputLabel>*/}
-                {/*            <Select*/}
-                {/*                labelId="stand-label"*/}
-                {/*                label="Stand"*/}
-                {/*                name="nom_stand"*/}
-                {/*                value={formData.nom_stand}*/}
-                {/*                onChange={handleSelectChange}*/}
-                {/*                MenuProps={{*/}
-                {/*                    PaperProps: {*/}
-                {/*                        style: {*/}
-                {/*                            maxHeight: 180,*/}
-                {/*                            overflow: 'auto',*/}
-                {/*                        },*/}
-                {/*                    },*/}
-                {/*                }}*/}
-                {/*            >*/}
-                {/*                {stands && stands.length > 0 && stands.map((stand) => (*/}
-                {/*                    <MenuItem key={stand.id_stand} value={stand.nom_stand}>*/}
-                {/*                        {stand.nom_stand}*/}
-                {/*                    </MenuItem>*/}
-                {/*                ))}*/}
-                {/*            </Select>*/}
-                {/*            {errors.nom_stand && (*/}
-                {/*                <Typography color="error" variant="caption" sx={{mt: 0.5}}>*/}
-                {/*                    {errors.nom_stand}*/}
-                {/*                </Typography>*/}
-                {/*            )}*/}
-                {/*        </FormControl>*/}
-                {/*        {!isEditing && (<TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Mot de passe" name="password" type="password" value={password} onChange={handlePasswordChange} error={!!errors.password} helperText={errors.password}/>)}*/}
-                {/*        {error && (*/}
-                {/*            <Typography color="error" variant="body2" sx={{ mt: 1 }}>*/}
-                {/*                {error}*/}
-                {/*            </Typography>*/}
-                {/*        )}*/}
-                {/*    </DialogContent>*/}
-                {/*    <DialogActions>*/}
-                {/*        <Button onClick={handleClose} sx={{color: "#7f5656"}}>Annuler</Button>*/}
-                {/*        <Button onClick={handleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">{isEditing ? "Modifier" : "Ajouter"}</Button>*/}
-                {/*    </DialogActions>*/}
-                {/*</Dialog>*/}
-
             </div>
             <Footer/>
         </>

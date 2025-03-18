@@ -1,6 +1,7 @@
 import User from "./User.ts";
 
 export default class Benevole extends User {
+    ids_stands: string | null = null;
     noms_stands: string | null;
 
     constructor(id_user: number, username: string, nom: string, prenom: string, role: string, noms_stands: string | null) {

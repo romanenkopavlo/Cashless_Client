@@ -171,7 +171,7 @@ export const GestionMarques = () => {
                 </Button>
             </div>
             <div style={{ padding: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <TableContainer component={Paper} sx={{maxHeight: 400, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
+                <TableContainer component={Paper} sx={{maxHeight: 250, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
                         <TableHead>
                             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>

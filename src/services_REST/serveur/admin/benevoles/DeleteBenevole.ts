@@ -13,7 +13,7 @@ export const DeleteBenevole = async(id_benevole: number) => {
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && (error.response.status === 409 || error.response.status === 501)) {
                 throw new Error(error.response.data.message);
             }
         }
