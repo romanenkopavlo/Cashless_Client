@@ -43,6 +43,7 @@
 
   "URL_GET_CARDS": "/api/admin/cards/getCards",
   "URL_DELETE_CARD": "/api/admin/cards/deleteCard",
+  "URL_READ_FILE_CARDS": "/api/admin/cards/readFileCards",
 
   "URL_GET_TERMINALS": "/api/admin/terminals/getTerminals",
   "URL_UPDATE_TERMINAL": "/api/admin/terminals/updateTerminal",
