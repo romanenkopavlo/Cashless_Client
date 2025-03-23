@@ -81,11 +81,14 @@ export const GestionBenevoles = () => {
             const timer = setTimeout(() => setSuccessMessage(null), 3000);
             return () => clearTimeout(timer);
         }
+    }, [successMessage]);
+
+    useEffect(() => {
         if (successAffMessage) {
             const timer = setTimeout(() => setSuccessAffMessage(null), 3000);
             return () => clearTimeout(timer);
         }
-    }, [successMessage, successAffMessage]);
+    },  [successAffMessage]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -438,7 +441,7 @@ export const GestionBenevoles = () => {
 
                 <DialogContent dividers sx={{ p: 4, bgcolor: "#fafafa" }}>
                     <Grid2 container spacing={4} justifyContent="center" alignItems="stretch">
-                        <Grid2 display="flex" flexDirection="column" height="100%">
+                        <Grid2 display="flex" flexDirection="column" height="100%" sx={{ alignItems: "center" }}>
                             <Typography
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
@@ -446,7 +449,7 @@ export const GestionBenevoles = () => {
                                 <PeopleIcon fontSize="small" /> Stands du bénévole
                             </Typography>
                             <Paper sx={{
-                                p: 2,
+                                p: 1,
                                 flex: 1,
                                 overflowY: "auto",
                                 border: "1px solid #ddd",
@@ -455,6 +458,8 @@ export const GestionBenevoles = () => {
                                 bgcolor: "white",
                                 minHeight: 80,
                                 maxHeight: 250,
+                                minWidth: 300,
+                                maxWidth: 320
                             }}>
                                 {benevoleStands.length > 0 ? (
                                     <List dense>
@@ -476,7 +481,7 @@ export const GestionBenevoles = () => {
                             </Paper>
                         </Grid2>
 
-                        <Grid2 display="flex" flexDirection="column" height="100%">
+                        <Grid2 display="flex" flexDirection="column" height="100%" sx={{ alignItems: "center" }}>
                             <Typography
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
@@ -484,7 +489,7 @@ export const GestionBenevoles = () => {
                                 <PersonAddIcon fontSize="small" /> Stands non assignés
                             </Typography>
                             <Paper sx={{
-                                p: 2,
+                                p: 1,
                                 flex: 1,
                                 overflowY: "auto",
                                 border: "1px solid #ddd",
@@ -493,6 +498,8 @@ export const GestionBenevoles = () => {
                                 bgcolor: "white",
                                 minHeight: 80,
                                 maxHeight: 250,
+                                minWidth: 300,
+                                maxWidth: 320
                             }}>
                                 {unassignedStands.length > 0 ? (
                                     <List dense>
@@ -540,17 +547,15 @@ export const GestionBenevoles = () => {
                 open={openSnackbar}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
-                message={error}
                 anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'center'
                 }}
-                action={
-                    <Button sx={{color: "#fff"}} size="small" onClick={handleCloseSnackbar}>
-                        Fermer
-                    </Button>
-                }
-            />
+            >
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {error}
+                </Alert>
+            </Snackbar>
             </div>
             <Footer />
         </>
