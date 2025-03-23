@@ -1,19 +1,18 @@
 import parameters from "../../../../public/parameters.json";
-import Card from "../../../models/Card.ts";
 import {AxiosJwt} from "../../../utils/Axios-JWT.ts";
 import {AxiosError} from "axios";
 
 const URL_ADD_CARD = parameters.URL_ADD_CARD
 
-export const AddCard = async(cardNumber: number): Promise<Card | null> => {
+export const AddCard = async(cardNumber: number) => {
     try {
         const axiosJWT = AxiosJwt();
-        const response = await axiosJWT.post<Card>(`${URL_ADD_CARD}`, {cardNumber});
-        console.log(`response.data de requette AddCard ${response.data.numero}`)
+        const response = await axiosJWT.post(`${URL_ADD_CARD}`, {cardNumber});
+        console.log(`response.data de requette AddCard ${response.data.message}`)
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && [400, 401, 404, 409, 500, 501].includes(error.response.status)) {
                 throw new Error(error.response.data.message);
             }
         }

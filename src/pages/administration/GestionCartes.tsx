@@ -171,8 +171,8 @@ export const GestionCartes = () => {
                                                sx={{border: "1px solid #ddd", width: "150px"}}>Numéro</TableCell>
                                     <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "150px"}}>NFC</TableCell>
-                                    <TableCell align="center" sx={{border: "1px solid #ddd", width: "150px"}}>Montant
-                                        (€)</TableCell>
+                                    <TableCell align="center"
+                                               sx={{border: "1px solid #ddd", width: "150px"}}>Montant (€)</TableCell>
                                     <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "150px"}}>Utilisateur</TableCell>
                                     <TableCell align="center"

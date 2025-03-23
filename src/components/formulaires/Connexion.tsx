@@ -7,8 +7,8 @@ import {Link, useLocation, useNavigate} from "react-router";
 import {ValidationConnexion} from "./ValidationConnexion.ts";
 import {Login} from "../../services_REST/serveur/connection/Login.ts";
 import {useAuthenticationJWTStore} from "../../stores/AuthenticationJWT.ts";
-import {useCardStore} from "../../stores/CardStore.ts";
-import {GetCardData} from "../../services_REST/serveur/users/GetCardData.ts";
+import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
+import {GetCardsData} from "../../services_REST/serveur/users/GetCardsData.ts";
 
 interface FormData {
     login: string
@@ -20,7 +20,7 @@ export const Connexion = () => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const navigate = useNavigate();
     const {setAccessToken} = useAuthenticationJWTStore()
-    const {setCard} = useCardStore();
+    const {setCards} = useUserCardsStore();
     const location = useLocation();
     const successMessage = location.state?.successMessage || '';
 
@@ -30,13 +30,13 @@ export const Connexion = () => {
                 if (token != null) {
                     console.log("token recu du serveur: " + token)
                     setAccessToken(token)
-                    return GetCardData()
+                    return GetCardsData()
                 }
             })
-            .then(card => {
-                if (card != null) {
-                    console.log("card received: " + card)
-                    setCard(card)
+            .then(cards => {
+                if (cards != null) {
+                    console.log("cards received: " + cards)
+                    setCards(cards)
                     navigate('/profile')
                 }
             })

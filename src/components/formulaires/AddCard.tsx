@@ -4,7 +4,8 @@ import { FaCreditCard } from "react-icons/fa";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {AddCard} from "../../services_REST/serveur/users/AddCard.ts";
 import {ValidationCard} from "./ValidationCard.ts";
-import {useCardStore} from "../../stores/CardStore.ts";
+import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
+import {GetCardsData} from "../../services_REST/serveur/users/GetCardsData.ts";
 
 interface FormData {
     cardNumber: number
@@ -15,19 +16,22 @@ interface AddCardFormProps {
 }
 
 export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
-    const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
+    const {register, handleSubmit, formState:{errors}, reset} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const {setCard} = useCardStore()
+    const {setCards} = useUserCardsStore()
 
     const onSubmit:SubmitHandler<FormData>=data => {
         AddCard(data.cardNumber)
-            .then(card => {
-                if (card != null) {
-                    setCard(card)
-                    console.log(card)
-                    console.log("Balance: " + card.montant)
-                    console.log("Number: " + card.numero)
-                    setSuccessMessage("Carte ajoutée avec succès !");
+            .then(data => {
+                console.log(data.message);
+                setSuccessMessage(data.message);
+                reset();
+                setErrorMessage('');
+                return GetCardsData();
+            })
+            .then(cards => {
+                if (cards !== null) {
+                    setCards(cards);
                 }
             })
             .catch (error => {

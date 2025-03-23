@@ -22,7 +22,7 @@ import {
 import { useTransactionsStore } from "../../stores/TransactionsStore.ts";
 import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import {useEffect, useState} from "react";
-import { handleSortByDate } from "../../utils/sortMethods.ts";
+import { handleAdminSortByDate } from "../../utils/sortMethods.ts";
 import {RembourserTransaction} from "../../services_REST/serveur/admin/transactions/RembourserTransaction.ts";
 import {useCardsStore} from "../../stores/CardsStore.ts";
 import {updateTransactions} from "../../services/transactions.ts";
@@ -154,7 +154,7 @@ export const GestionTransactions = () => {
                             <TableHead>
                                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>ID</TableCell>
-                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px", cursor: filteredTransactions && filteredTransactions.length > 1 ? "pointer" : "default"}} onClick={filteredTransactions && filteredTransactions.length > 1 ? () => handleSortByDate(transactions, sortOrder, setTransactions, setSortOrder) : undefined}>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px", cursor: filteredTransactions && filteredTransactions.length > 1 ? "pointer" : "default"}} onClick={filteredTransactions && filteredTransactions.length > 1 ? () => handleAdminSortByDate(transactions, sortOrder, setTransactions, setSortOrder) : undefined}>
                                         Date {filteredTransactions && filteredTransactions.length > 1 && (
                                         sortOrder === "asc"
                                             ? <ArrowUpward fontSize="small" sx={{ verticalAlign: "middle" }}/>

@@ -11,43 +11,24 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import {useEffect, useState} from "react";
-import {useCardStore} from "../../stores/CardStore.ts";
-import {GetTransactions} from "../../services_REST/serveur/users/GetTransactions.ts";
+import {useState} from "react";
+import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
 import {ArrowDownward, ArrowUpward} from "@mui/icons-material";
-import {useTransactionsStore} from "../../stores/TransactionsStore.ts";
-import {useVariablesStore} from "../../stores/VariablesStore.ts";
-import {handleSortByDate} from "../../utils/sortMethods.ts";
+import {handleUserSortByDate} from "../../utils/sortMethods.ts";
+import {useLocation} from "react-router";
 
 export const HistoriqueTransaction = () => {
-    const {card} = useCardStore();
-    const {transactions, setTransactions} = useTransactionsStore()
-    const {isFetchedTransactions, setIsFetchedTransactions} = useVariablesStore()
+    const {cards, setTransactions} = useUserCardsStore();
+    const location = useLocation();
+    const cardId = location.state?.cardId;
+    const selectedCard = cards.find(card => card.id_carte === Number(cardId));
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
-    useEffect(() => {
-        if (!isFetchedTransactions) {
-            setIsFetchedTransactions(true)
-            
-            if (!card?.numero) return;
-            GetTransactions(card?.numero)
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
-                        setTransactions([]);
-                    } else {
-                        setTransactions(data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des transactions:", error);
-                    setTransactions([]);
-                })
-        }
-    }, [card?.numero, isFetchedTransactions, setIsFetchedTransactions, setTransactions]);
 
     const getColorByType = (type: string) => {
         switch (type) {
-            case 'Annulation':
+            case 'Annulation de crédit':
+                return 'grey';
+            case 'Annulation de débit':
                 return 'grey';
             case 'Remboursement':
                 return 'blue';
@@ -63,50 +44,61 @@ export const HistoriqueTransaction = () => {
     return (
         <>
         <Header/>
-            <Container maxWidth="md" sx={{mt: 3, mb: 3}}>
-                <Typography variant="h5" sx={{textAlign: "center", mb: 2, fontWeight: "bold"}}>
-                    Historique des transactions
-                </Typography>
+            {selectedCard ? (
+                <Container maxWidth="md" sx={{mt: 3, mb: 3}}>
+                    <Typography variant="h5" sx={{textAlign: "center", mb: 2, fontWeight: "bold"}}>
+                        Historique des transactions
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary" sx={{textAlign: "center", mb: 2, fontWeight: "bold"}}>
+                        Carte: {selectedCard.numero}
+                    </Typography>
 
-                <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
-                    <Table stickyHeader>
-                        <TableHead>
-                            <TableRow sx={{bgcolor: "#f5f5f5"}}>
-                                <TableCell align="center" sx={{fontWeight: "bold", cursor: transactions && transactions.length > 1 ? "pointer" : "default"}} onClick={transactions && transactions.length > 1 ? () => handleSortByDate(transactions, sortOrder, setTransactions, setSortOrder) : undefined}>
-                                    Date {transactions && transactions.length > 1 && (
-                                    sortOrder === "asc"
-                                        ? <ArrowUpward fontSize="small" sx={{ verticalAlign: "middle" }}/>
-                                        : <ArrowDownward fontSize="small" sx={{ verticalAlign: "middle" }}/>
-                                )}</TableCell>
-                                <TableCell align="center" sx={{fontWeight: "bold"}}>Montant</TableCell>
-                                <TableCell align="center" sx={{fontWeight: "bold"}}>Opération</TableCell>
-                                <TableCell align="center" sx={{fontWeight: "bold"}}>Stand</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {transactions && transactions.length > 0 ? (
-                                transactions.map((transaction) => (
-                                    <TableRow key={transaction.id_transaction}>
-                                        <TableCell align="center">{new Date(transaction.date).toLocaleString()}</TableCell>
-                                        <TableCell align="center"
-                                                   sx={{color: getColorByType(transaction.type)}}>
-                                            {transaction.type === "Crédit" || transaction.type === "Remboursement" ? "+" : transaction.type === "Débit" ? "-" : ""}{transaction.montant_transaction}€
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            {transaction.type}
-                                        </TableCell>
-                                        <TableCell align="center">{transaction.nom_stand}</TableCell>
+                    {selectedCard.transactions && selectedCard.transactions.length > 0 ? (
+                        <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow sx={{bgcolor: "#f5f5f5"}}>
+                                        <TableCell align="center" sx={{fontWeight: "bold", cursor: selectedCard.transactions.length > 1 ? "pointer" : "default"}} onClick={selectedCard.transactions.length > 1 ? () => handleUserSortByDate(selectedCard.id_carte, selectedCard.transactions, sortOrder, setTransactions, setSortOrder) : undefined}>
+                                            Date {selectedCard.transactions.length > 1 && (
+                                            sortOrder === "asc"
+                                                ? <ArrowUpward fontSize="small" sx={{ verticalAlign: "middle" }}/>
+                                                : <ArrowDownward fontSize="small" sx={{ verticalAlign: "middle" }}/>
+                                        )}</TableCell>
+                                        <TableCell align="center" sx={{fontWeight: "bold"}}>Montant (€)</TableCell>
+                                        <TableCell align="center" sx={{fontWeight: "bold"}}>Opération</TableCell>
+                                        <TableCell align="center" sx={{fontWeight: "bold"}}>Stand</TableCell>
                                     </TableRow>
-                                    ))
-                                ) : (
-                                 <TableRow>
-                                     <TableCell colSpan={4} align="center">Aucune transaction trouvée.</TableCell>
-                                 </TableRow>
-                             )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Container>
+                                </TableHead>
+                                <TableBody>
+                                        {selectedCard.transactions.map((transaction) => (
+                                            <TableRow key={transaction.id_transaction}>
+                                                <TableCell align="center">{new Date(transaction.date).toLocaleString()}</TableCell>
+                                                <TableCell align="center"
+                                                           sx={{color: getColorByType(transaction.type)}}>
+                                                    {transaction.type === "Crédit" || transaction.type === "Remboursement" ? "+" : transaction.type === "Débit" ? "-" : ""}{transaction.montant_transaction}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {transaction.type}
+                                                </TableCell>
+                                                <TableCell align="center">{transaction.nom_stand}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    ) : (
+                        <Typography variant="h6" align="center" fontWeight="bold">
+                            Aucune transaction trouvée.
+                        </Typography>
+                    )}
+                </Container>
+                ) : (
+                <Container maxWidth="md" sx={{mt: 3, mb: 3}}>
+                    <Typography variant="h6" align="center" fontWeight="bold">
+                        Carte non trouvée.
+                    </Typography>
+                </Container>
+            )}
         <Footer/>
         </>
     )

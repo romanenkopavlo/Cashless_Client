@@ -1,17 +1,17 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
-import {Link} from "react-router";
-import {Alert, Box, Button, Container, Typography} from "@mui/material";
+import {Alert, Box, Card, CardContent, Container, Typography} from "@mui/material";
 import {useAuthenticationJWTStore} from "../../stores/AuthenticationJWT.ts";
 import {AddCardForm} from "../../components/formulaires/AddCard.tsx"
 import {getDecodedToken} from "../../utils/TokenDecodage.ts";
-import {useCardStore} from "../../stores/CardStore.ts";
+import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
 import {useEffect, useState} from "react";
+import {CardFestival} from "./CreditCard.tsx";
 
 export const Profile = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const {accessToken} = useAuthenticationJWTStore()
-    const {card} = useCardStore();
+    const {accessToken} = useAuthenticationJWTStore();
+    const {cards} = useUserCardsStore();
     const user = getDecodedToken(accessToken?.token)
 
     useEffect(() => {
@@ -23,77 +23,48 @@ export const Profile = () => {
 
     return (
         <>
-            <Header/>
-            <Container maxWidth="xs" sx={{mt: 3}}>
-                {successMessage && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                        {successMessage}
-                    </Alert>
-                )}
+            <Header />
+            <div style={{height: "1200px"}}>
+            <Container maxWidth="sm" sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+                <Card sx={{ width: "100%", boxShadow: 6, borderRadius: 3, p: 3, textAlign: "center" }}>
+                    <CardContent>
+                        <Typography variant="h5" fontWeight="bold">
+                            {user?.prenom} {user?.nom}
+                        </Typography>
+                        <Typography variant="subtitle1" color="text.secondary">
+                            {user?.login}
+                        </Typography>
+                        <Typography variant="body2" sx={{ mt: 1, color: "gray" }}>
+                            Rôle: {user?.role}
+                        </Typography>
 
-                <Box
-                    sx = {
-                        {
-                            p: 4,
-                            boxShadow: 16,
-                            borderRadius: 2,
-                            bgcolor: "background.paper"
-                        }
-                    }>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{fontWeight: 'bold', textAlign: 'left'}}
-                    >
-                        ID: {user?.id}
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{fontWeight: 'bold', textAlign: 'left'}}
-                    >
-                        Nom: {user?.nom}
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{fontWeight: 'bold', textAlign: 'left'}}
-                    >
-                        Prenom: {user?.prenom}
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{fontWeight: 'bold', textAlign: 'left'}}
-                    >
-                        Username: {user?.login}
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{fontWeight: 'bold', textAlign: 'left'}}
-                    >
-                        Role: {user?.role}
-                    </Typography>
-                    {card && card.numero &&
-                        <Typography
-                            sx={{fontWeight: 'bold', textAlign: 'left'}}>
-                            Numéro de la carte: {card.numero}
-                        </Typography>}
-                    {card && card.montant &&
-                        <Typography
-                            sx={{fontWeight: 'bold', textAlign: 'left'}}>
-                            Solde: {card.montant}€
-                        </Typography>}
-                    {card?.numero && card?.montant &&
-                        <Box sx={{mt: 2, textAlign: "center"}}>
-                            <Link to="/transaction-history" style={{textDecoration: "none"}}>
-                                <Button color="inherit" className="cta-button">
-                                    Voir l'historique des transactions
-                                </Button>
-                            </Link>
+                        {successMessage && (
+                            <Alert severity="success" sx={{ mt: 2, mb: 2, justifyContent: "center", textAlign: "center" }}>
+                                {successMessage}
+                            </Alert>
+                        )}
+
+                        <Box sx={{ mt: 3 }}>
+                            <AddCardForm setSuccessMessage={setSuccessMessage} />
                         </Box>
-                    }
-                </Box>
-                {!card?.numero && !card?.montant &&
-                    <AddCardForm setSuccessMessage={setSuccessMessage}/>}
+                    </CardContent>
+                </Card>
             </Container>
-            <Footer/>
+
+            {cards && cards.length > 0 &&
+                <Container maxWidth="lg" sx={{ mt: 4 }}>
+                    <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, textAlign: "center" }}>
+                        Mes Cartes
+                    </Typography>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
+                            {cards.map((card) => (
+                                    <CardFestival key={card.id_carte} number={card.numero} balance={card.montant} id={card.id_carte}/>
+                            ))}
+                    </Box>
+                </Container>
+            }
+            </div>
+            <Footer />
         </>
     )
 }
