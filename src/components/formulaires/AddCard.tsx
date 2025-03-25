@@ -5,10 +5,9 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {AddCard} from "../../services_REST/serveur/users/AddCard.ts";
 import {ValidationCard} from "./ValidationCard.ts";
 import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
-import {GetCardsData} from "../../services_REST/serveur/users/GetCardsData.ts";
 
 interface FormData {
-    cardNumber: number
+    cardNumber: number;
 }
 
 interface AddCardFormProps {
@@ -18,21 +17,15 @@ interface AddCardFormProps {
 export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
     const {register, handleSubmit, formState:{errors}, reset} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const {setCards} = useUserCardsStore()
+    const {addCard} = useUserCardsStore();
 
     const onSubmit:SubmitHandler<FormData>=data => {
         AddCard(data.cardNumber)
             .then(data => {
-                console.log(data.message);
-                setSuccessMessage(data.message);
                 reset();
+                addCard(data.newCard);
                 setErrorMessage('');
-                return GetCardsData();
-            })
-            .then(cards => {
-                if (cards !== null) {
-                    setCards(cards);
-                }
+                setSuccessMessage(data.message);
             })
             .catch (error => {
                 console.log(error)

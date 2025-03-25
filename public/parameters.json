@@ -50,5 +50,7 @@
   "URL_DELETE_TERMINAL": "/api/admin/terminals/deleteTerminal",
 
   "URL_ADMIN_GET_TRANSACTIONS": "/api/admin/transactions/getTransactions",
-  "URL_ADMIN_REFUND_TRANSACTION": "/api/admin/transactions/refundTransaction"
+  "URL_ADMIN_REFUND_TRANSACTION": "/api/admin/transactions/refundTransaction",
+
+  "URL_GET_STATISTICS": "/api/admin/statistics/getStatistics"
 }

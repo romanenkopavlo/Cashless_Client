@@ -6,7 +6,7 @@ import {AddCardForm} from "../../components/formulaires/AddCard.tsx"
 import {getDecodedToken} from "../../utils/TokenDecodage.ts";
 import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
 import {useEffect, useState} from "react";
-import {CardFestival} from "./CreditCard.tsx";
+import {CardFestival} from "../../components/CreditCard.tsx";
 
 export const Profile = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);

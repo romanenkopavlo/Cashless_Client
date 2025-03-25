@@ -30,9 +30,9 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
 import {separerStands} from "../../services/stands.ts";
 import {useStandsStore} from "../../stores/StandsStore.ts";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import PeopleIcon from "@mui/icons-material/People";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import Stand from "../../models/Stand.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
 
@@ -287,7 +287,7 @@ export const GestionBenevoles = () => {
     return (
         <>
             <Header />
-            <div style={{height: "1065px"}}>
+            <div style={{height: "1200px"}}>
             <div style={{ padding: "20px", textAlign: "center" }}>
                 <Typography variant="h5" sx={{ mt: 1 }}>
                     Gestion des bénévoles
@@ -446,7 +446,7 @@ export const GestionBenevoles = () => {
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                             >
-                                <PeopleIcon fontSize="small" /> Stands du bénévole
+                                <ApartmentIcon fontSize="small" /> Stands du bénévole
                             </Typography>
                             <Paper sx={{
                                 p: 1,
@@ -486,7 +486,7 @@ export const GestionBenevoles = () => {
                                 variant="h6"
                                 sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1, mb: 1 }}
                             >
-                                <PersonAddIcon fontSize="small" /> Stands non assignés
+                                <AddBusinessIcon fontSize="small" /> Stands non assignés
                             </Typography>
                             <Paper sx={{
                                 p: 1,

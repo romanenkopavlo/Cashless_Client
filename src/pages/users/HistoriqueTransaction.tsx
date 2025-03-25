@@ -80,7 +80,7 @@ export const HistoriqueTransaction = () => {
                                                 <TableCell align="center">
                                                     {transaction.type}
                                                 </TableCell>
-                                                <TableCell align="center">{transaction.nom_stand}</TableCell>
+                                                <TableCell align="center">{transaction.nom_stand ? transaction.nom_stand : '—'}</TableCell>
                                             </TableRow>
                                         ))}
                                 </TableBody>

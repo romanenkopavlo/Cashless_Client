@@ -10,6 +10,7 @@ interface InterfaceVariablesStore {
     isFetchedPhones: boolean
     isFetchedMarques: boolean
     isFetchedTerminals: boolean
+    isFetchedStatistics: boolean
     setIsFetchedStands: (newState: boolean) => void
     setIsFetchedVisitors: (newState: boolean) => void
     setIsFetchedTransactions: (newState: boolean) => void
@@ -19,6 +20,7 @@ interface InterfaceVariablesStore {
     setIsFetchedPhones: (newState: boolean) => void
     setIsFetchedMarques: (newState: boolean) => void
     setIsFetchedTerminals: (newState: boolean) => void
+    setIsFetchedStatistics: (newState: boolean) => void
 }
 export const useVariablesStore = create<InterfaceVariablesStore>()(
     (set) => ({
@@ -31,6 +33,7 @@ export const useVariablesStore = create<InterfaceVariablesStore>()(
         isFetchedPhones: false,
         isFetchedMarques: false,
         isFetchedTerminals: false,
+        isFetchedStatistics: false,
         setIsFetchedVisitors: (newState) => set({isFetchedVisitors: newState}),
         setIsFetchedStands: (newState) => set({isFetchedStands: newState}),
         setIsFetchedTransactions: (newState) => set({isFetchedTransactions: newState}),
@@ -40,5 +43,6 @@ export const useVariablesStore = create<InterfaceVariablesStore>()(
         setIsFetchedPhones: (newState) => set({isFetchedPhones: newState}),
         setIsFetchedMarques: (newState) => set({isFetchedMarques: newState}),
         setIsFetchedTerminals: (newState) => set({isFetchedTerminals: newState}),
+        setIsFetchedStatistics: (newState) => set({isFetchedStatistics: newState}),
     }),
 )

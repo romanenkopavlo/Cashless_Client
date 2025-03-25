@@ -5,6 +5,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import PieChartIcon from "@mui/icons-material/PieChart";
 import {Link} from "react-router";
 import './Header.css';
 import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
@@ -80,6 +81,11 @@ export const Header = () => {
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-phones" sx={menuItemStyle}><SmartphoneIcon sx={{ marginRight: '10px' }} /> Gestion des téléphones</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-transactions" sx={menuItemStyle}><EuroIcon sx={{ marginRight: '10px' }} /> Gestion des transactions</MenuItem>
                                     </Menu>
+                                    <Link to="/statistiques">
+                                        <IconButton color="inherit">
+                                            <PieChartIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
+                                        </IconButton>
+                                    </Link>
                                 </>}
                             <Link to="/profile">
                                 <IconButton color="inherit">

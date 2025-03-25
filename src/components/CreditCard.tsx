@@ -58,7 +58,7 @@ interface CardFestivalProps {
 export const CardFestival = ({ number, balance, id }: CardFestivalProps) => {
     return (
         <CardContainer>
-                <Chip />
+                <Chip/>
             <CreditCardIcon style={{ position: "absolute", top: 16, right: 16, fontSize: 32 }} />
             <CardContent>
                 <CardNumber>{number}</CardNumber>

@@ -8,6 +8,7 @@ import {useCardsStore} from "../stores/CardsStore.ts";
 import {usePhonesStore} from "../stores/PhonesStore.ts";
 import {useMarquesStore} from "../stores/MarquesStore.ts";
 import {useTerminalsStore} from "../stores/TerminalsStore.ts";
+import {useStatisticsStore} from "../stores/StatisticsStore.ts";
 
 export const ViderStores = () => {
     const festivalierState = useFestivaliersStore.getState();
@@ -19,6 +20,7 @@ export const ViderStores = () => {
     const phoneState = usePhonesStore.getState();
     const marqueState = useMarquesStore.getState();
     const terminalState = useTerminalsStore.getState();
+    const statisticState = useStatisticsStore.getState();
     const variablesState = useVariablesStore.getState();
 
     if (festivalierState.festivaliers) festivalierState.setFestivaliers([]);
@@ -30,6 +32,7 @@ export const ViderStores = () => {
     if (phoneState.phones) phoneState.setPhones([]);
     if (marqueState.marques) marqueState.setMarques([]);
     if (terminalState.terminals) terminalState.setTerminals([]);
+    if (statisticState.statistics) statisticState.setStatistics([]);
 
     if (variablesState.isFetchedVisitors) variablesState.setIsFetchedVisitors(false);
     if (variablesState.isFetchedStands) variablesState.setIsFetchedStands(false);
@@ -40,4 +43,5 @@ export const ViderStores = () => {
     if (variablesState.isFetchedPhones) variablesState.setIsFetchedPhones(false);
     if (variablesState.isFetchedMarques) variablesState.setIsFetchedMarques(false);
     if (variablesState.isFetchedTerminals) variablesState.setIsFetchedTerminals(false);
+    if (variablesState.isFetchedStatistics) variablesState.setIsFetchedStatistics(false);
 }
