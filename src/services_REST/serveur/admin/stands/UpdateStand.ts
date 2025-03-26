@@ -5,10 +5,10 @@ import {AxiosJwt} from "../../../../utils/Axios-JWT.ts";
 
 const URL_UPDATE_STAND = parameters.URL_UPDATE_STAND
 
-export const UpdateStand = async(id_stand: number, nom_stand: string, solde: number, nom_categorie: string) => {
+export const UpdateStand = async(id_stand: number, nom_stand: string, nombre_terminaux: number, nom_categorie: string) => {
     try {
         const axiosJWT = AxiosJwt()
-        const response = await axiosJWT.post(`${URL_UPDATE_STAND}`, {id_stand, nom_stand, solde, nom_categorie});
+        const response = await axiosJWT.post(`${URL_UPDATE_STAND}`, {id_stand, nom_stand, nombre_terminaux, nom_categorie});
         console.log(response.data)
         return response.data
     } catch (error) {

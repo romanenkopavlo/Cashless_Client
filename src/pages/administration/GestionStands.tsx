@@ -55,12 +55,13 @@ export const GestionStands = () => {
     const [error, setError] = useState<string | null>(null);
     const [nomError, setNomError] = useState<string | null>(null);
     const [categorieError, setCategorieError] = useState<string | null>(null);
-    const [soldeError, setSoldeError] = useState<string | null>(null);
-    const soldeRegex = /^(?:\d+|\d*[.,]?\d+)$/;
+    const [nombreTerminauxError, setNombreTerminauxError] = useState<string | null>(null);
+
+    const positiveIntegerRegex = /^\d+$/;
 
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<Stand>(new Stand(0, "", 0, "", 0));
+    const [formData, setFormData] = useState<Stand>(new Stand(0, "", "", 0, 0));
 
     const [openBenevolesDialog, setOpenBenevolesDialog] = useState(false);
     const [selectedStand, setSelectedStand] = useState<Stand | null>(null);
@@ -103,12 +104,19 @@ export const GestionStands = () => {
         }
     }
 
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (nomError) setNomError(null);
+        if (categorieError) setCategorieError(null);
+        if (nombreTerminauxError) setNombreTerminauxError(null);
+    }
+
     const handleOpen = (editing = false, stand: Stand | null = null) => {
         setIsEditing(editing);
         if (editing && stand) {
             setFormData(stand);
         } else {
-            setFormData(new Stand(0, "", 0, "", 0));
+            setFormData(new Stand(0, "", "", 0, 0));
         }
         setOpen(true);
     };
@@ -116,20 +124,19 @@ export const GestionStands = () => {
     const handleClose = () => {
         setOpen(false);
         setTimeout(() => {
-            setFormData(new Stand(0, "", 0, "", 0));
+            setFormData(new Stand(0, "", "", 0, 0));
             setIsEditing(false);
-            setError(null);
-            setSoldeError(null);
-            setCategorieError(null);
-            setNomError(null)
+            cleanErrors();
         }, 300);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSelectChange = (event: SelectChangeEvent) => {
+        cleanErrors();
         setFormData({
             ...formData,
             [event.target.name as string]: event.target.value
@@ -137,8 +144,10 @@ export const GestionStands = () => {
     };
 
     const handleSubmit = () => {
-        if (!soldeRegex.test(String(formData.solde))) {
-            setSoldeError("Veuillez entrer un nombre positif valide");
+        cleanErrors();
+
+        if (!positiveIntegerRegex.test(String(formData.nombre_terminaux))) {
+            setNombreTerminauxError("Veuillez entrer un nombre entier positif valide.");
             return;
         }
 
@@ -153,7 +162,7 @@ export const GestionStands = () => {
         }
 
         if (isEditing) {
-            UpdateStand(formData.id_stand, formData.nom_stand, formData.solde, formData.nom_categorie)
+            UpdateStand(formData.id_stand, formData.nom_stand, formData.nombre_terminaux, formData.nom_categorie)
                 .then((data) => {
                     updateStand(data.updatedStand);
                     return GetBenevoles();
@@ -171,7 +180,7 @@ export const GestionStands = () => {
                     setError(error.message)
                 })
         } else {
-            CreateStand(formData.nom_stand, formData.solde, formData.nom_categorie)
+            CreateStand(formData.nom_stand, formData.nombre_terminaux, formData.nom_categorie)
                 .then((data) => {
                     addStand(data.newStand);
                     handleClose();
@@ -186,7 +195,7 @@ export const GestionStands = () => {
     const handleDelete = (id: number) => {
         DeleteStand(id)
             .then(() => {
-                deleteStand(id)
+                deleteStand(id);
                 return GetBenevoles();
             })
             .then((data) => {
@@ -264,9 +273,10 @@ export const GestionStands = () => {
                             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>ID</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nom</TableCell>
-                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Solde (€)</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Catégorie</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nombre de bénévoles</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nombre de terminaux</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nombre maximal de terminaux</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -276,7 +286,6 @@ export const GestionStands = () => {
                                     <TableRow key={stand.id_stand}>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>{stand.id_stand}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_stand}</TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{stand.solde}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nom_categorie ? stand.nom_categorie : '—'}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}><Button
                                             onClick={() => handleOpenBenevolesDialog(stand)}
@@ -291,6 +300,8 @@ export const GestionStands = () => {
                                         >
                                             {stand.nombre_benevoles}
                                         </Button></TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nombre_terminaux}</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>5</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             {categories && categories.length > 0 && (<Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(stand.id_stand)} color="error"><Delete /></Button>
@@ -299,7 +310,7 @@ export const GestionStands = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={6} align="center">Aucun stand trouvé.</TableCell>
+                                    <TableCell colSpan={7} align="center">Aucun stand trouvé.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
@@ -312,7 +323,6 @@ export const GestionStands = () => {
                 <DialogTitle>{isEditing ? "Modifier le stand" : "Ajouter un stand"}</DialogTitle>
                 <DialogContent>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Nom" name="nom_stand" value={formData.nom_stand} onChange={handleChange} error={!!nomError} helperText={nomError}/>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Solde (€)" name="solde" type="number" value={formData.solde} onChange={handleChange} error={!!soldeError} helperText={soldeError}/>
                     <FormControl fullWidth margin="dense" sx={styleCustom} error={!!categorieError}>
                         <InputLabel id="categorie-label">Catégorie</InputLabel>
                         <Select
@@ -342,6 +352,19 @@ export const GestionStands = () => {
                             </Typography>
                         )}
                     </FormControl>
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        variant="outlined"
+                        sx={styleCustom}
+                        label="Nombre maximal de terminaux"
+                        name="nombre_terminaux"
+                        type="number"
+                        value={formData.nombre_terminaux}
+                        onChange={handleChange}
+                        error={!!nombreTerminauxError}
+                        helperText={nombreTerminauxError}
+                    />
                     {error && (
                         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                             {error}

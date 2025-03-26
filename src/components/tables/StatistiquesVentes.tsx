@@ -33,8 +33,6 @@ export const StatistiquesVentes = () => {
                                                sx={{border: "1px solid #ddd", width: "100px"}}>Nombre Débits</TableCell>
                                     <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "150px"}}>Somme Débits (€)</TableCell>
-                                    <TableCell align="center"
-                                               sx={{border: "1px solid #ddd", width: "150px"}}>Solde (€)</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -61,15 +59,11 @@ export const StatistiquesVentes = () => {
                                                 border: "1px solid #ddd",
                                                 width: "100px"
                                             }}>{statistic.somme_debits ? statistic.somme_debits : 0}</TableCell>
-                                            <TableCell align="center" sx={{
-                                                border: "1px solid #ddd",
-                                                width: "150px"
-                                            }}>{statistic.solde ? statistic.solde : 0}</TableCell>
                                         </TableRow>
                                     )
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} align="center">Aucun point vente trouvé.</TableCell>
+                                        <TableCell colSpan={5} align="center">Aucun point vente trouvé.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
