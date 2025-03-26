@@ -57,7 +57,7 @@ export const GestionStands = () => {
     const [categorieError, setCategorieError] = useState<string | null>(null);
     const [nombreTerminauxError, setNombreTerminauxError] = useState<string | null>(null);
 
-    const positiveIntegerRegex = /^\d+$/;
+    const positiveIntegerRegex = /^[1-9]\d*$/;
 
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -146,11 +146,6 @@ export const GestionStands = () => {
     const handleSubmit = () => {
         cleanErrors();
 
-        if (!positiveIntegerRegex.test(String(formData.nombre_terminaux))) {
-            setNombreTerminauxError("Veuillez entrer un nombre entier positif valide.");
-            return;
-        }
-
         if (formData.nom_stand.trim() === "") {
             setNomError("Le nom du stand est obligatoire");
             return;
@@ -158,6 +153,16 @@ export const GestionStands = () => {
 
         if (formData.nom_categorie.trim() === "") {
             setCategorieError("La catégorie est obligatoire");
+            return;
+        }
+
+        if (!positiveIntegerRegex.test(String(formData.nombre_terminaux))) {
+            setNombreTerminauxError("Veuillez entrer un nombre entier positif valide.");
+            return;
+        }
+
+        if (formData.nombre_terminaux > 20) {
+            setNombreTerminauxError("Le nombre maximal de terminaux ne peut pas dépasser 20.");
             return;
         }
 
@@ -300,8 +305,8 @@ export const GestionStands = () => {
                                         >
                                             {stand.nombre_benevoles}
                                         </Button></TableCell>
-                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nombre_terminaux}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>5</TableCell>
+                                        <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{stand.nombre_terminaux}</TableCell>
                                         <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
                                             {categories && categories.length > 0 && (<Button onClick={() => handleOpen(true, stand)}><Edit sx={{color: "#7f5656"}}/></Button>)}
                                             <Button onClick={() => handleDelete(stand.id_stand)} color="error"><Delete /></Button>
@@ -359,9 +364,15 @@ export const GestionStands = () => {
                         sx={styleCustom}
                         label="Nombre maximal de terminaux"
                         name="nombre_terminaux"
-                        type="number"
+                        type="text"
                         value={formData.nombre_terminaux}
-                        onChange={handleChange}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const value = e.target.value;
+
+                            if (value === "" || positiveIntegerRegex.test(value)) {
+                                handleChange(e);
+                            }
+                        }}
                         error={!!nombreTerminauxError}
                         helperText={nombreTerminauxError}
                     />
