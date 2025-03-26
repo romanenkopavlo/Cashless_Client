@@ -161,7 +161,6 @@ export const GestionStands = () => {
             return;
         }
 
-
         if (formData.nombre_terminaux > 20) {
             setNombreTerminauxError("Le nombre maximal de terminaux ne peut pas dépasser 20.");
             return;
