@@ -5,7 +5,7 @@ import {
     Button, Container,
     Dialog, DialogActions, DialogContent,
     DialogTitle, FormControl, Grid2, IconButton, InputLabel, List, ListItem, ListItemText, MenuItem,
-    Paper, Select, Snackbar,
+    Paper, Select, SelectChangeEvent,
     Table,
     TableBody,
     TableCell,
@@ -28,22 +28,32 @@ import {updateFestivaliers} from "../../services/festivaliers.ts";
 import {useFestivaliersStore} from "../../stores/FestivaliersStore.ts";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
-import {separerStands} from "../../services/stands.ts";
+import {separerStands, updateStands} from "../../services/stands.ts";
 import {useStandsStore} from "../../stores/StandsStore.ts";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import Stand from "../../models/Stand.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
+import {SnackbarError} from "../../components/SnackbarError.tsx";
+import {updateTransactions} from "../../services/transactions.ts";
+import {useTransactionsStore} from "../../stores/TransactionsStore.ts";
+import {useCardsStore} from "../../stores/CardsStore.ts";
+import {updateCards} from "../../services/cards.ts";
+import {styleCustomRole} from "../../styles/CustomInputField.ts";
+import {SuccessMessage} from "../../components/SuccessMessage.tsx";
 
 export const GestionBenevoles = () => {
     const {benevoles, setBenevoles, addBenevole, updateBenevole, deleteBenevole} = useBenevolesStore();
-    const {setFestivaliers} = useFestivaliersStore();
     const {setStands} = useStandsStore();
-    const {isFetchedBenevoles, isFetchedVisitors, setIsFetchedBenevoles, setIsFetchedVisitors} = useVariablesStore();
+    const {setFestivaliers} = useFestivaliersStore();
+    const {setTransactions} = useTransactionsStore();
+    const {setCards} = useCardsStore();
+    const {isFetchedBenevoles, isFetchedVisitors, isFetchedStands, setIsFetchedBenevoles, setIsFetchedVisitors, setIsFetchedStands} = useVariablesStore();
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
+    const [errorSnackbar, setSnackbarError] = useState<string | null>(null);
     const [roleError, setRoleError] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string | null }>({
         nom: null,
@@ -54,9 +64,8 @@ export const GestionBenevoles = () => {
 
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<Benevole>(new Benevole(0, "", "", "", "", ""));
+    const [formData, setFormData] = useState<Benevole>(new Benevole(0, "", "", "", "", "", ""));
 
-    const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openRoleDialog, setOpenRoleDialog] = useState(false);
     const [selectedRole, setSelectedRole] = useState<string>("");
 
@@ -69,19 +78,15 @@ export const GestionBenevoles = () => {
     const [benevoleStands, setBenevoleStands] = useState<Stand[]>([]);
     const [unassignedStands, setUnassignedStands] = useState<Stand[]>([]);
 
+    const [roles, setRoles] = useState<{ [key: string]: string }>({});
+    const [permissionsForStand, setPermissionsForStand] = useState<{ id: number; stand_nom: string; permission: string }[]>([]);
+
     useEffect(() => {
         if (!isFetchedBenevoles) {
             setIsFetchedBenevoles(true);
             updateBenevoles(setBenevoles);
         }
     }, [isFetchedBenevoles, setBenevoles, setIsFetchedBenevoles]);
-
-    useEffect(() => {
-        if (successMessage) {
-            const timer = setTimeout(() => setSuccessMessage(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [successMessage]);
 
     useEffect(() => {
         if (successAffMessage) {
@@ -115,7 +120,7 @@ export const GestionBenevoles = () => {
         if (editing && benevole) {
             setFormData(benevole);
         } else {
-            setFormData(new Benevole(0, "", "", "", "", ""));
+            setFormData(new Benevole(0, "", "", "", "", "", ""));
         }
         setOpen(true);
     };
@@ -123,23 +128,34 @@ export const GestionBenevoles = () => {
     const handleClose = () => {
         setOpen(false);
         setTimeout(() => {
-            setFormData(new Benevole(0, "", "", "", "", ""));
+            setFormData(new Benevole(0, "", "", "", "", "", ""));
             setPassword("");
             setIsEditing(false);
-            setError(null);
-            setErrors({nom: null, prenom: null, username: null, password: null});
+            cleanErrors();
         }, 300);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleRoleChange = (standId: number, event: SelectChangeEvent) => {
+        cleanErrors();
+        setRoles((prevRoles) => ({
+            ...prevRoles,
+            [standId]: event.target.value,
+        }));
+    };
+
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setPassword(e.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        cleanErrors();
+
         const newErrors = validateForm(formData, isEditing, password);
 
         setErrors(newErrors);
@@ -149,16 +165,24 @@ export const GestionBenevoles = () => {
         }
 
         if (isEditing) {
-            UpdateBenevole(formData.id, formData.nom, formData.prenom, null, formData.login, null)
-                .then((data) => {
-                    setSuccessMessage(data.message);
-                    updateBenevole(data.updatedBenevole);
-                    handleClose();
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des bénévoles:", error);
-                    setError(error.message)
-                })
+            try {
+                const data = await UpdateBenevole(formData.id, formData.nom, formData.prenom, null, formData.login, null)
+                setSuccessMessage(data.message);
+                updateBenevole(data.updatedBenevole);
+                updateTransactions(setTransactions);
+                updateCards(setCards);
+                handleClose();
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error("Erreur lors de la récupération des utilisateurs:", error);
+                    setError(error.message);
+                    return;
+                } else {
+                    console.error("Erreur inconnue:", error);
+                    setError("Une erreur inconnue est survenue.");
+                    return;
+                }
+            }
         } else {
             CreateBenevole(formData.nom, formData.prenom, formData.login, password)
                 .then((data) => {
@@ -181,8 +205,7 @@ export const GestionBenevoles = () => {
             })
             .catch((error) => {
                 console.error("Erreur lors de la suppression des bénévoles:", error);
-                setError(error.message);
-                setOpenSnackbar(true);
+                setSnackbarError(error.message);
             });
     };
 
@@ -195,20 +218,16 @@ export const GestionBenevoles = () => {
     const handleCloseRoleDialog = () => {
         setOpenRoleDialog(false);
         setTimeout(() => {
-            setError(null);
-            setRoleError(null);
-            setFormData(new Benevole(0, "", "", "", "", ""));
+            cleanErrors();
+            setFormData(new Benevole(0, "", "", "", "", "", ""));
         }, 300);
     };
 
-    const handleCloseSnackbar = () => {
-        setError(null);
-        setOpenSnackbar(false);
-    };
-
     const handleRoleSubmit = async () => {
+        cleanErrors();
+
         if (selectedRole.trim() === "") {
-            setRoleError("Le rôle est obligatoire");
+            setRoleError("Le rôle est obligatoire.");
             return;
         }
 
@@ -217,8 +236,11 @@ export const GestionBenevoles = () => {
             setSuccessMessage(data.message);
             updateFestivaliers(setFestivaliers);
             updateBenevoles(setBenevoles);
+            updateStands(setStands);
+
+            if (!isFetchedStands) setIsFetchedStands(true);
             if (!isFetchedVisitors) setIsFetchedVisitors(true);
-            handleClose();
+            handleCloseRoleDialog();
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Erreur lors de la récupération des utilisateurs:", error);
@@ -230,28 +252,27 @@ export const GestionBenevoles = () => {
                 return;
             }
         }
-
-        setOpenRoleDialog(false);
     };
 
     const handleOpenStandsDialog = (benevole : Benevole) => {
         setSelectedBenevole(benevole);
-        separerStands(benevole, setStands, setBenevoleStands, setUnassignedStands);
+        separerStands(benevole, setStands, setBenevoleStands, setUnassignedStands, setPermissionsForStand);
         setOpenStandsDialog(true);
     };
 
-    const handleAffectStand = async (id_stand: number) => {
+    const handleAffectStand = async (id_stand: number, role: string) => {
         try {
-            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "add");
+            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "add", role);
 
+            setError(null);
             setSuccessAffMessage(data.message);
-
             const benevoles = await GetBenevoles();
             useBenevolesStore.getState().setBenevoles(benevoles);
             const updatedBenevole = useBenevolesStore.getState().benevoles.find(benevole => benevole.id === selectedBenevole?.id);
 
-            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands);
+            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands, setPermissionsForStand);
         } catch (error) {
+            setSuccessAffMessage(null);
             if (error instanceof Error) {
                 console.error("Erreur lors de l'affecation du bénévole:", error);
                 setError(error.message);
@@ -264,16 +285,18 @@ export const GestionBenevoles = () => {
 
     const handleDisaffectStand = async (id_stand: number) => {
         try {
-            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "remove");
+            const data = await AffectationBenevole(id_stand, selectedBenevole?.id, "remove", null);
 
+            setRoles({});
+            setError(null);
             setSuccessAffMessage(data.message);
-
             const benevoles = await GetBenevoles();
             useBenevolesStore.getState().setBenevoles(benevoles);
             const updatedBenevole = useBenevolesStore.getState().benevoles.find(benevole => benevole.id === selectedBenevole?.id);
 
-            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands);
+            separerStands(updatedBenevole, setStands, setBenevoleStands, setUnassignedStands, setPermissionsForStand);
         } catch (error) {
+            setSuccessAffMessage(null);
             if (error instanceof Error) {
                 console.error("Erreur lors de la désaffecation du bénévole:", error);
                 setError(error.message);
@@ -283,6 +306,12 @@ export const GestionBenevoles = () => {
             }
         }
     };
+
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (roleError) setRoleError(null);
+        if (errors) setErrors({nom: null, prenom: null, username: null, password: null})
+    }
 
     return (
         <>
@@ -296,17 +325,9 @@ export const GestionBenevoles = () => {
                     Ajouter un bénévole
                 </Button>
             </div>
-            {successMessage && (
-                <Container maxWidth="xs" sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Alert severity="success">
-                        {successMessage}
-                    </Alert>
-                </Container>
-            )}
+
+            <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
             <div style={{ padding: "20px" }}>
                 <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
@@ -314,9 +335,9 @@ export const GestionBenevoles = () => {
                             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>ID</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Nom</TableCell>
-                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Prénom</TableCell>
-                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Login</TableCell>
-                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Stand</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Prénom</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Login</TableCell>
+                                <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Stands</TableCell>
                                 <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -425,7 +446,7 @@ export const GestionBenevoles = () => {
                     Stands du bénévole: {selectedBenevole?.login}
                 </DialogTitle>
 
-                {successAffMessage && (
+                {(successAffMessage || error) && (
                     <Container maxWidth="xs" sx={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -433,8 +454,8 @@ export const GestionBenevoles = () => {
                         mt: 2,
                         mb: 2
                     }}>
-                        <Alert severity="success">
-                            {successAffMessage}
+                        <Alert severity={successAffMessage ? "success" : "error"} sx={{ textAlign: 'center' }}>
+                            {successAffMessage || error}
                         </Alert>
                     </Container>
                 )}
@@ -463,15 +484,24 @@ export const GestionBenevoles = () => {
                             }}>
                                 {benevoleStands.length > 0 ? (
                                     <List dense>
-                                        {benevoleStands.map((stand, id) => (
-                                            <ListItem
-                                                key={id}
-                                                sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
-                                            >
-                                                <ListItemText primary={stand.nom_stand} />
-                                                <IconButton color="inherit" onClick={() => handleDisaffectStand(stand.id_stand)}><RemoveCircleOutlineIcon/></IconButton>
-                                            </ListItem>
-                                        ))}
+                                        {benevoleStands.map((stand, id) => {
+                                            const role = permissionsForStand.find(p => p.id === stand.id_stand)?.permission || "Aucune rôle";
+
+                                            return (
+                                                <ListItem
+                                                    key={id}
+                                                    sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
+                                                >
+                                                    <ListItemText
+                                                        primary={stand.nom_stand}
+                                                        secondary={role}
+                                                    />
+                                                    <IconButton color="inherit" onClick={() => handleDisaffectStand(stand.id_stand)}>
+                                                        <RemoveCircleOutlineIcon />
+                                                    </IconButton>
+                                                </ListItem>
+                                            );
+                                        })}
                                     </List>
                                 ) : (
                                     <Typography variant="body2" color="textSecondary" sx={{ textAlign: "center", py: 2 }}>
@@ -509,7 +539,19 @@ export const GestionBenevoles = () => {
                                                 sx={{ "&:hover": { bgcolor: "#f0f0f0", borderRadius: 1 } }}
                                             >
                                                 <ListItemText primary={stand.nom_stand} />
-                                                <IconButton color="inherit" onClick={() => handleAffectStand(stand.id_stand)}><AddCircleOutlineIcon/></IconButton>
+                                                <FormControl sx={styleCustomRole}>
+                                                    <InputLabel>Rôle</InputLabel>
+                                                    <Select
+                                                        value={roles[stand.id_stand] || ''}
+                                                        onChange={(event) => handleRoleChange(stand.id_stand, event)}
+                                                        label="Rôle"
+                                                        fullWidth
+                                                    >
+                                                        <MenuItem value="Créditeur">Créditeur</MenuItem>
+                                                        <MenuItem value="Débiteur">Débiteur</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                                <IconButton color="inherit" onClick={() => handleAffectStand(stand.id_stand, roles[stand.id_stand])} disabled={!roles[stand.id_stand]}><AddCircleOutlineIcon/></IconButton>
                                             </ListItem>
                                         ))}
                                     </List>
@@ -526,6 +568,8 @@ export const GestionBenevoles = () => {
                 <DialogActions sx={{ justifyContent: "center", pb: 2, bgcolor: "#fafafa" }}>
                     <Button
                         onClick={() => {
+                            setRoles({});
+                            setError(null);
                             setSuccessAffMessage(null);
                             setOpenStandsDialog(false);
                         }}
@@ -543,19 +587,7 @@ export const GestionBenevoles = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center'
-                }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-                    {error}
-                </Alert>
-            </Snackbar>
+            <SnackbarError error={errorSnackbar} setError={setSnackbarError}/>
             </div>
             <Footer />
         </>

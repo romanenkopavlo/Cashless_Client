@@ -1,9 +1,6 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
-    Alert,
-    Button,
-    Container,
     FormControl, InputLabel, MenuItem,
     Paper, Select, SelectChangeEvent,
     Table,
@@ -17,22 +14,16 @@ import {
 import {
     ArrowDownward,
     ArrowUpward,
-    MonetizationOn
 } from "@mui/icons-material";
 import { useTransactionsStore } from "../../stores/TransactionsStore.ts";
 import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import {useEffect, useState} from "react";
-import { handleAdminSortByDate } from "../../utils/sortMethods.ts";
-import {RembourserTransaction} from "../../services_REST/serveur/admin/transactions/RembourserTransaction.ts";
-import {useCardsStore} from "../../stores/CardsStore.ts";
+import {handleAdminSortByDate} from "../../utils/sortMethods.ts";
 import {updateTransactions} from "../../services/transactions.ts";
-import {updateCards} from "../../services/cards.ts";
 
 export const GestionTransactions = () => {
     const {transactions, setTransactions} = useTransactionsStore();
-    const {setCards} = useCardsStore();
     const {isFetchedTransactions, setIsFetchedTransactions} = useVariablesStore();
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [filterType, setFilterType] = useState<string>("Tous");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -42,13 +33,6 @@ export const GestionTransactions = () => {
             updateTransactions(setTransactions)
         }
     }, [isFetchedTransactions, setIsFetchedTransactions, setTransactions]);
-
-    useEffect(() => {
-        if (successMessage) {
-            const timer = setTimeout(() => setSuccessMessage(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [successMessage]);
 
     const handleFilterChange = (event: SelectChangeEvent) => {
         setFilterType(event.target.value as string);
@@ -77,18 +61,6 @@ export const GestionTransactions = () => {
                 return 'inherit';
         }
     };
-
-    const handleRefund = async (id: number) => {
-        try {
-            await RembourserTransaction(id)
-            setSuccessMessage("Les fonds ont été remboursés")
-
-            updateTransactions(setTransactions)
-            updateCards(setCards)
-        } catch (error) {
-            console.error("Erreur lors du remboursement:", error)
-        }
-    }
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -120,17 +92,6 @@ export const GestionTransactions = () => {
                         Gestion des transactions
                     </Typography>
                 </div>
-                {successMessage && (
-                    <Container maxWidth="xs" sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}>
-                        <Alert severity="success">
-                            {successMessage}
-                        </Alert>
-                    </Container>
-                )}
                 <div style={{padding: "20px", textAlign: "center"}}>
                     <FormControl sx={styleCustom}>
                         <InputLabel>Filtrer par type</InputLabel>
@@ -165,6 +126,7 @@ export const GestionTransactions = () => {
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Opération</TableCell>
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Utilisateur</TableCell>
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Stand</TableCell>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Bénévole</TableCell>
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Terminal</TableCell>
                                     <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Actions</TableCell>
                                 </TableRow>
@@ -180,24 +142,14 @@ export const GestionTransactions = () => {
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{transaction.type}</TableCell>
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.login_utilisateur ? transaction.login_utilisateur : '—'}</TableCell>
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.nom_stand ? transaction.nom_stand : '—'}</TableCell>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.login_benevole ? transaction.login_benevole : '—'}</TableCell>
                                             <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{transaction.marque_terminal ? transaction.marque_terminal : '—'} {transaction.modele_terminal ? transaction.modele_terminal : '—'}</TableCell>
-                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
-                                                {(transaction.type === 'Annulation de crédit' || transaction.type === 'Annulation de débit' || transaction.type === 'Remboursement' || transaction.type === 'Crédit') && (
-                                                    <>—</>
-                                                )}
-                                                {transaction.type === 'Débit' && (
-                                                    <>
-                                                        <Button color="success" onClick={() => handleRefund(transaction.id_transaction)} startIcon={<MonetizationOn />}>
-                                                            Rembourser
-                                                        </Button>
-                                                    </>
-                                                )}
-                                            </TableCell>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>—</TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={9} align="center">Aucune transaction trouvée.</TableCell>
+                                        <TableCell colSpan={10} align="center">Aucune transaction trouvée.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>

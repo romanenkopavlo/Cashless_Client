@@ -1,8 +1,7 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
-    Alert,
-    Button, Container,
+    Button,
     Dialog, DialogActions, DialogContent,
     DialogTitle, FormControl,
     InputLabel,
@@ -33,6 +32,8 @@ import {updateTransactions} from "../../services/transactions.ts";
 import {updateBenevoles} from "../../services/benevoles.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {updateFestivaliers} from "../../services/festivaliers.ts";
+import {SnackbarError} from "../../components/SnackbarError.tsx";
+import {SuccessMessage} from "../../components/SuccessMessage.tsx";
 
 export const GestionFestivaliers = () => {
     const {festivaliers, setFestivaliers, addFestivalier, updateFestivalier, deleteFestivalier} = useFestivaliersStore();
@@ -43,6 +44,7 @@ export const GestionFestivaliers = () => {
     const [password, setPassword] = useState<string>("");
 
     const [error, setError] = useState<string | null>(null);
+    const [errorSnackbar, setSnackbarError] = useState<string | null>(null);
     const [roleError, setRoleError] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string | null }>({
         nom: null,
@@ -173,14 +175,16 @@ export const GestionFestivaliers = () => {
             const data = await DeleteFestivalier(id);
             setSuccessMessage(data.message);
             deleteFestivalier(id);
-
-            updateTransactions(setTransactions);
-            updateCards(setCards);
-
-            if (!isFetchedTransactions) setIsFetchedTransactions(true);
-            if (!isFetchedCards) setIsFetchedCards(true);
         } catch (error) {
-            console.error("Erreur lors de la suppression des festivaliers:", error)
+            if (error instanceof Error) {
+                console.error("Erreur lors de la récupération des utilisateurs:", error);
+                setSnackbarError(error.message);
+                return;
+            } else {
+                console.error("Erreur inconnue:", error);
+                setSnackbarError("Une erreur inconnue est survenue.");
+                return;
+            }
         }
     };
 
@@ -211,7 +215,7 @@ export const GestionFestivaliers = () => {
             updateFestivaliers(setFestivaliers);
             updateBenevoles(setBenevoles);
             if (!isFetchedBenevoles) setIsFetchedBenevoles(true);
-            handleClose();
+            handleCloseRoleDialog();
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Erreur lors de la récupération des utilisateurs:", error);
@@ -221,8 +225,6 @@ export const GestionFestivaliers = () => {
                 setError("Une erreur inconnue est survenue.");
             }
         }
-
-        setOpenRoleDialog(false);
     };
 
     return (
@@ -237,17 +239,9 @@ export const GestionFestivaliers = () => {
                     Ajouter un festivalier
                 </Button>
             </div>
-            {successMessage && (
-                <Container maxWidth="xs" sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Alert severity="success">
-                        {successMessage}
-                    </Alert>
-                </Container>
-            )}
+
+            <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
             <div style={{ padding: "20px" }}>
                 <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
@@ -335,6 +329,7 @@ export const GestionFestivaliers = () => {
                     <Button onClick={handleRoleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">Modifier</Button>
                 </DialogActions>
             </Dialog>
+            <SnackbarError error={errorSnackbar} setError={setSnackbarError}/>
             </div>
             <Footer />
         </>

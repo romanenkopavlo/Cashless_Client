@@ -3,16 +3,18 @@ export default class Transaction {
     date: string;
     montant_transaction: number;
     login_utilisateur: string;
+    login_benevole: string;
     numero_carte: string;
     type: string;
     nom_stand: string;
     modele_terminal: string;
     marque_terminal: string;
 
-    constructor(idtransaction: number, date: string, montant_transaction: number, login_utilisateur: string, numero_carte: string, type: string, nom_stand: string, modele_terminal: string, marque_terminal: string) {
-        this.id_transaction = idtransaction;
+    constructor(id_transaction: number, date: string, montant_transaction: number, login_utilisateur: string, login_benevole: string, numero_carte: string, type: string, nom_stand: string, modele_terminal: string, marque_terminal: string) {
+        this.id_transaction = id_transaction;
         this.date = date;
         this.montant_transaction = montant_transaction;
+        this.login_benevole = login_benevole;
         this.login_utilisateur = login_utilisateur;
         this.numero_carte = numero_carte;
         this.type = type;

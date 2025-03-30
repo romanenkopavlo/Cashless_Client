@@ -115,30 +115,3 @@ export const Statistiques = () => {
         </>
     );
 };
-
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-// import {useState} from "react";
-
-// const [startDate, setStartDate] = useState<Date | null>(null);
-// const [endDate, setEndDate] = useState<Date | null>(null);
-
-{/*<Box sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>*/}
-{/*    <Typography variant="h6">*/}
-{/*        Sélectionnez la période :*/}
-{/*    </Typography>*/}
-{/*    <LocalizationProvider dateAdapter={AdapterDayjs}>*/}
-{/*        <Box sx={{ display: "flex", gap: 2 }}>*/}
-{/*            <DatePicker*/}
-{/*                label="Date de début"*/}
-{/*                value={startDate}*/}
-{/*                onChange={(newValue) => setStartDate(newValue)}*/}
-{/*            />*/}
-{/*            <DatePicker*/}
-{/*                label="Date de fin"*/}
-{/*                value={endDate}*/}
-{/*                onChange={(newValue) => setEndDate(newValue)}*/}
-{/*            />*/}
-{/*        </Box>*/}
-{/*    </LocalizationProvider>*/}
-{/*</Box>*/}

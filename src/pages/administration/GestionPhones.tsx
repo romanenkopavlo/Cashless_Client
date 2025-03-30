@@ -2,7 +2,7 @@ import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem,
-    Paper, Select, SelectChangeEvent, Snackbar,
+    Paper, Select, SelectChangeEvent,
     Table,
     TableBody,
     TableCell,
@@ -17,12 +17,14 @@ import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import {useEffect, useState} from "react";
 import { usePhonesStore } from "../../stores/PhonesStore.ts";
 import Phone from "../../models/Phone.ts";
-import { GestionMarques } from "./GestionMarques.tsx";
+import { GestionMarques } from "../../components/gestions/GestionMarques.tsx";
 import {useMarquesStore} from "../../stores/MarquesStore.ts";
 import {UpdatePhone} from "../../services_REST/serveur/admin/phones/UpdatePhone.ts";
 import {CreatePhone} from "../../services_REST/serveur/admin/phones/CreatePhone.ts";
 import {GetPhones} from "../../services_REST/serveur/admin/phones/GetPhones.ts";
 import {DeletePhone} from "../../services_REST/serveur/admin/phones/DeletePhone.ts";
+import {SuccessMessage} from "../../components/SuccessMessage.tsx";
+import {SnackbarError} from "../../components/SnackbarError.tsx";
 
 export const GestionPhones = () => {
     const {phones, setPhones, addPhone, updatePhone, deletePhone} = usePhonesStore();
@@ -30,10 +32,12 @@ export const GestionPhones = () => {
     const {isFetchedPhones, setIsFetchedPhones} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
+    const [errorSnackbar, setErrorSnackbar] = useState<string | null>(null);
     const [marqueError, setMarqueError] = useState<string | null>(null);
     const [modeleError, setModeleError] = useState<string | null>(null);
 
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Phone>(new Phone(0, "", ""));
@@ -92,22 +96,17 @@ export const GestionPhones = () => {
         setTimeout(() => {
             setFormData(new Phone(0, "", ""));
             setIsEditing(false);
-            setError(null);
-            setModeleError(null);
-            setMarqueError(null);
+            cleanErrors();
         }, 300);
     };
 
-    const handleCloseSnackbar = () => {
-        setError(null);
-        setOpenSnackbar(false);
-    };
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSelectChange = (event: SelectChangeEvent) => {
+        cleanErrors();
         setFormData({
             ...formData,
             [event.target.name as string]: event.target.value
@@ -115,6 +114,8 @@ export const GestionPhones = () => {
     };
 
     const handleSubmit = () => {
+        cleanErrors();
+
         if (formData.nom_marque.trim() === "") {
             setMarqueError("La marque est obligatoire");
             return;
@@ -128,6 +129,7 @@ export const GestionPhones = () => {
         if (isEditing) {
             UpdatePhone(formData.id_phone, formData.nom_marque, formData.nom_modele)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     updatePhone(data.updatedPhone);
                     handleClose();
                 })
@@ -138,6 +140,7 @@ export const GestionPhones = () => {
         } else {
             CreatePhone(formData.nom_marque, formData.nom_modele)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     addPhone(data.newPhone);
                     handleClose();
                 })
@@ -150,20 +153,26 @@ export const GestionPhones = () => {
 
     const handleDelete = (id: number) => {
         DeletePhone(id)
-            .then(() => {
-                deletePhone(id)
+            .then((data) => {
+                setSuccessMessage(data.message);
+                deletePhone(id);
             })
             .catch((error) => {
                 console.error("Erreur lors de la suppression des téléphones:", error)
-                setError(error.message)
-                setOpenSnackbar(true);
+                setErrorSnackbar(error.message)
             });
     };
+
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (marqueError) setMarqueError(null);
+        if (modeleError) setModeleError(null);
+    }
 
     return (
         <>
             <Header />
-            <div style={{height: "1100px"}}>
+            <div style={{height: "1200px"}}>
                 <div style={{padding: "20px", textAlign: "center" }}>
                     <Typography variant="h5" sx={{ mt: 1 }}>
                         Gestion des téléphones
@@ -176,6 +185,9 @@ export const GestionPhones = () => {
                         <Typography variant="h6" sx={{ mt: 1 }}>L'ajout d'un téléphone est impossible. Veuillez d'abord ajouter des marques.</Typography>
                     )}
                 </div>
+
+                <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
                 <div style={{ padding: "20px" }}>
                     <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                         <Table sx={{ border: "1px solid #ddd" }}>
@@ -256,21 +268,7 @@ export const GestionPhones = () => {
                     </DialogActions>
                 </Dialog>
 
-                <Snackbar
-                    open={openSnackbar}
-                    autoHideDuration={6000}
-                    onClose={handleCloseSnackbar}
-                    message={error}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
-                    action={
-                        <Button sx={{color: "#fff"}} size="small" onClick={handleCloseSnackbar}>
-                            Fermer
-                        </Button>
-                    }
-                />
+                <SnackbarError error={errorSnackbar} setError={setErrorSnackbar}/>
             </div>
             <Footer />
         </>

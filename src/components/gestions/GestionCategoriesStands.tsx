@@ -21,6 +21,7 @@ import {DeleteCategory} from "../../services_REST/serveur/admin/categories/Delet
 import {GetCategories} from "../../services_REST/serveur/admin/categories/GetCategories.ts";
 import {useStandsStore} from "../../stores/StandsStore.ts";
 import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
+import {SuccessMessage} from "../SuccessMessage.tsx";
 
 export const GestionCategories = () => {
     const {categories, setCategories, addCategorie, updateCategorie, deleteCategorie} = useCategoriesStore();
@@ -29,6 +30,8 @@ export const GestionCategories = () => {
 
     const [error, setError] = useState<string | null>(null);
     const [nomError, setNomError] = useState<string | null>(null);
+
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -88,16 +91,18 @@ export const GestionCategories = () => {
         setTimeout(() => {
             setFormData(new Categorie(0, ""));
             setIsEditing(false);
-            setError(null);
-            setNomError(null)
+            cleanErrors();
         }, 300);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = () => {
+        cleanErrors();
+
         if (formData.nom_categorie.trim() === "") {
             setNomError("Le nom de la catérogie est obligatoire");
             return;
@@ -106,6 +111,7 @@ export const GestionCategories = () => {
         if (isEditing) {
             UpdateCategory(formData.id_categorie, formData.nom_categorie)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     updateCategorie(data.updatedCategorie);
                     return GetStands();
                 })
@@ -124,6 +130,7 @@ export const GestionCategories = () => {
         } else {
             CreateCategory(formData.nom_categorie)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     addCategorie(data.newCategorie);
                     handleClose();
                 })
@@ -136,8 +143,9 @@ export const GestionCategories = () => {
 
     const handleDelete = (id: number) => {
         DeleteCategory(id)
-            .then(() => {
-                deleteCategorie(id)
+            .then((data) => {
+                setSuccessMessage(data.message);
+                deleteCategorie(id);
                 return GetStands();
             })
             .then((data) => {
@@ -150,6 +158,11 @@ export const GestionCategories = () => {
             .catch((error) => console.error("Erreur lors de la suppression des catégories:", error));
     };
 
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (nomError) setNomError(null);
+    }
+
     return (
         <>
             <div style={{ padding: "20px", textAlign: "center" }}>
@@ -160,6 +173,7 @@ export const GestionCategories = () => {
                     Ajouter une catégorie
                 </Button>
             </div>
+            <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
             <div style={{ padding: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <TableContainer component={Paper} sx={{maxHeight: 250, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>

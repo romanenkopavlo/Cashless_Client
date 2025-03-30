@@ -12,7 +12,7 @@ export const GetMarques = async() => {
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && [400, 401, 404, 409, 500, 501].includes(error.response.status)) {
                 throw new Error(error.response.data.message);
             }
         }

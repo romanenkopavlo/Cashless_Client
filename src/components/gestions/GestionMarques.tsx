@@ -1,6 +1,6 @@
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
-    Paper, Snackbar,
+    Paper,
     Table,
     TableBody,
     TableCell,
@@ -21,6 +21,8 @@ import {GetPhones} from "../../services_REST/serveur/admin/phones/GetPhones.ts";
 import {CreateMarque} from "../../services_REST/serveur/admin/marques/CreateMarque.ts";
 import {DeleteMarque} from "../../services_REST/serveur/admin/marques/DeleteMarque.ts";
 import {GetMarques} from "../../services_REST/serveur/admin/marques/GetMarques.ts";
+import {SuccessMessage} from "../SuccessMessage.tsx";
+import {SnackbarError} from "../SnackbarError.tsx";
 
 export const GestionMarques = () => {
     const {marques, setMarques, addMarque, updateMarque, deleteMarque} = useMarquesStore();
@@ -28,9 +30,11 @@ export const GestionMarques = () => {
     const {isFetchedMarques, setIsFetchedMarques} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
+    const [errorSnackbar, setErrorSnackbar] = useState<string | null>(null);
     const [nomError, setNomError] = useState<string | null>(null);
 
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Marque>(new Marque(0, ""));
@@ -89,21 +93,18 @@ export const GestionMarques = () => {
         setTimeout(() => {
             setFormData(new Marque(0, ""));
             setIsEditing(false);
-            setError(null);
-            setNomError(null)
+            cleanErrors()
         }, 300);
     };
 
-    const handleCloseSnackbar = () => {
-        setError(null);
-        setOpenSnackbar(false);
-    };
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = () => {
+        cleanErrors();
+
         if (formData.nom_marque.trim() === "") {
             setNomError("Le nom de la marque est obligatoire");
             return;
@@ -112,6 +113,7 @@ export const GestionMarques = () => {
         if (isEditing) {
             UpdateMarque(formData.id_marque, formData.nom_marque)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     updateMarque(data.updatedMarque);
                     return GetPhones();
                 })
@@ -130,6 +132,7 @@ export const GestionMarques = () => {
         } else {
             CreateMarque(formData.nom_marque)
                 .then((data) => {
+                    setSuccessMessage(data.message);
                     addMarque(data.newMarque);
                     handleClose();
                 })
@@ -142,8 +145,9 @@ export const GestionMarques = () => {
 
     const handleDelete = (id: number) => {
         DeleteMarque(id)
-            .then(() => {
-                deleteMarque(id)
+            .then((data) => {
+                setSuccessMessage(data.message);
+                deleteMarque(id);
                 return GetPhones();
             })
             .then((data) => {
@@ -155,10 +159,14 @@ export const GestionMarques = () => {
             })
             .catch((error) => {
                 console.error("Erreur lors de la suppression des marques:", error);
-                setError(error.message);
-                setOpenSnackbar(true);
+                setErrorSnackbar(error.message);
             });
     };
+
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (nomError) setNomError(null);
+    }
 
     return (
         <>
@@ -170,6 +178,9 @@ export const GestionMarques = () => {
                     Ajouter une marque
                 </Button>
             </div>
+
+            <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
             <div style={{ padding: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <TableContainer component={Paper} sx={{maxHeight: 250, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
@@ -218,21 +229,7 @@ export const GestionMarques = () => {
                 </DialogActions>
             </Dialog>
 
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                message={error}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center'
-                }}
-                action={
-                    <Button sx={{color: "#fff"}} size="small" onClick={handleCloseSnackbar}>
-                        Fermer
-                    </Button>
-                }
-            />
+            <SnackbarError error={errorSnackbar} setError={setErrorSnackbar}/>
         </>
     )
 }

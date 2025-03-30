@@ -7,7 +7,6 @@
   "URL_BALANCE": "/api/auth/verifyBalance",
   "URL_ADD_CARD": "/api/auth/addCard",
   "URL_GET_CARDS_DATA": "/api/auth/getCardData",
-  "URL_GET_TRANSACTIONS": "/api/auth/getTransactions",
   "URL_SIGNUP": "/api/auth/signup",
 
   "URL_GET_STANDS": "/api/admin/stands/getStands",
@@ -46,11 +45,9 @@
   "URL_READ_FILE_CARDS": "/api/admin/cards/readFileCards",
 
   "URL_GET_TERMINALS": "/api/admin/terminals/getTerminals",
-  "URL_UPDATE_TERMINAL": "/api/admin/terminals/updateTerminal",
   "URL_DELETE_TERMINAL": "/api/admin/terminals/deleteTerminal",
 
   "URL_ADMIN_GET_TRANSACTIONS": "/api/admin/transactions/getTransactions",
-  "URL_ADMIN_REFUND_TRANSACTION": "/api/admin/transactions/refundTransaction",
 
   "URL_GET_STATISTICS": "/api/admin/statistics/getStatistics"
 }

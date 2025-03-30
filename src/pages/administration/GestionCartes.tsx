@@ -10,7 +10,7 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Typography, Box, Container, Alert, Snackbar
+    Typography, Box
 } from "@mui/material";
 import {Delete, UploadFile} from "@mui/icons-material";
 import {useVariablesStore} from "../../stores/VariablesStore.ts";
@@ -18,16 +18,16 @@ import {useCardsStore} from "../../stores/CardsStore.ts";
 import {DeleteCard} from "../../services_REST/serveur/admin/cards/DeleteCard.ts";
 import {updateCards} from "../../services/cards.ts";
 import {ReadFileCards} from "../../services_REST/serveur/admin/cards/AjouterCards.ts";
+import {SuccessMessage} from "../../components/SuccessMessage.tsx";
+import {SnackbarError} from "../../components/SnackbarError.tsx";
 
 export const GestionCartes = () => {
     const {cards, setCards, deleteCard} = useCardsStore();
     const {isFetchedCards, setIsFetchedCards} = useVariablesStore();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+    const [errorSnackbar, setSnackbarError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         if (!isFetchedCards) {
@@ -35,20 +35,6 @@ export const GestionCartes = () => {
             updateCards(setCards)
         }
     }, [isFetchedCards, setCards, setIsFetchedCards]);
-
-    useEffect(() => {
-        if (successMessage) {
-            const timer = setTimeout(() => setSuccessMessage(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [successMessage]);
-
-    useEffect(() => {
-        if (errorMessage) {
-            const timer = setTimeout(() => setErrorMessage(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [errorMessage]);
 
     const handleDelete = async (id: number) => {
         try {
@@ -58,11 +44,11 @@ export const GestionCartes = () => {
         } catch (error) {
             if (error instanceof Error) {
                 console.error("Erreur lors de la suppression des cartes:", error);
-                setErrorMessage(error.message);
+                setSnackbarError(error.message);
                 return;
             } else {
                 console.error("Erreur inconnue:", error);
-                setErrorMessage("Une erreur inconnue est survenue.");
+                setSnackbarError("Une erreur inconnue est survenue.");
                 return;
             }
         }
@@ -74,7 +60,7 @@ export const GestionCartes = () => {
             event.target.value = '';
 
             if (file.type !== "text/plain") {
-                setOpen(true);
+                setSnackbarError("Seuls les fichiers .txt sont autorisés !");
                 return;
             }
 
@@ -82,10 +68,6 @@ export const GestionCartes = () => {
 
             setSelectedFile(file);
         }
-    };
-
-    const handleClose = () => {
-        setOpen(false);
     };
 
     const handleUpload = async () => {
@@ -100,12 +82,11 @@ export const GestionCartes = () => {
             setSelectedFile(null);
             if (error instanceof Error) {
                 console.error("Erreur lors de l'envoi du fichier:", error);
-                setErrorMessage(error.message);
+                setSnackbarError(error.message);
                 return;
             } else {
                 console.error("Erreur inconnue:", error);
-                setOpen(true);
-                setErrorMessage("Une erreur inconnue est survenue.");
+                setSnackbarError("Une erreur inconnue est survenue.");
                 return;
             }
         }
@@ -147,18 +128,9 @@ export const GestionCartes = () => {
                         Ajouter
                     </Button>
                 </Box>
-                {(successMessage || errorMessage) && (
-                    <Container maxWidth="xs" sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textAlign: 'center'
-                    }}>
-                        <Alert severity={successMessage ? 'success' : 'error'}>
-                            {successMessage || errorMessage}
-                        </Alert>
-                    </Container>
-                )}
+
+                <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
                 <div style={{padding: "20px"}}>
                     <TableContainer component={Paper}
                                     sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
@@ -218,11 +190,7 @@ export const GestionCartes = () => {
                         </Table>
                     </TableContainer>
                 </div>
-                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
-                    <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                        Seuls les fichiers .txt sont autorisés !
-                    </Alert>
-                </Snackbar>
+                <SnackbarError error={errorSnackbar} setError={setSnackbarError}/>
             </div>
             <Footer/>
         </>
