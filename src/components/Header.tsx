@@ -57,7 +57,7 @@ export const Header = () => {
                         <div className="header-buttons">
                             {user?.role === "Administrateur" &&
                                 <>
-                                    <IconButton color="inherit" onClick={handleMenuOpen}>
+                                    <IconButton title="Menu" color="inherit" onClick={handleMenuOpen}>
                                         <MenuIcon fontSize="large" sx={{ color: "#FFFFFF" }} />
                                     </IconButton>
                                     <Menu
@@ -81,18 +81,18 @@ export const Header = () => {
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-phones" sx={menuItemStyle}><SmartphoneIcon sx={{ marginRight: '10px' }} /> Gestion des téléphones</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-transactions" sx={menuItemStyle}><EuroIcon sx={{ marginRight: '10px' }} /> Gestion des transactions</MenuItem>
                                     </Menu>
-                                    <Link to="/statistiques">
+                                    <Link to="/statistiques" title="Statistiques">
                                         <IconButton color="inherit">
                                             <PieChartIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
                                         </IconButton>
                                     </Link>
                                 </>}
-                            <Link to="/profile">
+                            <Link to="/profile" title="Profil">
                                 <IconButton color="inherit">
                                     <AccountCircleIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
                                 </IconButton>
                             </Link>
-                            <Link to="/logout">
+                            <Link to="/logout" title="Déconnexion">
                                 <IconButton color="inherit">
                                     <LogoutIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
                                 </IconButton>

@@ -4,7 +4,7 @@ import StatisticTotal from "../models/StatisticTotal.ts";
 
 export const updateStatistics = (
     setStatistics: (newStatistics: Statistic[]) => void,
-    setStatisticTotal: (newStatisticTotal: StatisticTotal | null) => void) => {
+    setStatisticTotal: ((newStatisticTotal: StatisticTotal | null) => void) | null) => {
     GetStatistics()
         .then((data) => {
             if (!data.statistics || !Array.isArray(data.statistics)) {
@@ -13,15 +13,19 @@ export const updateStatistics = (
                 setStatistics(data.statistics);
             }
 
-            if (!data.statisticTotal) {
-                setStatisticTotal(null);
-            } else {
-                setStatisticTotal(data.statisticTotal);
+            if (setStatisticTotal) {
+                if (!data.statisticTotal) {
+                    setStatisticTotal(null);
+                } else {
+                    setStatisticTotal(data.statisticTotal);
+                }
             }
         })
         .catch((error) => {
             console.error("Erreur lors de la récupération des statistiques:", error);
-            setStatistics([])
-            setStatisticTotal(null)
+            setStatistics([]);
+            if (setStatisticTotal) {
+                setStatisticTotal(null)
+            }
         })
 }

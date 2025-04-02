@@ -6,8 +6,10 @@
   "URL_LOGOUT": "/api/auth/logout",
   "URL_BALANCE": "/api/auth/verifyBalance",
   "URL_ADD_CARD": "/api/auth/addCard",
+  "URL_ACTIVATION_CARD": "/api/auth/activateCard",
   "URL_GET_CARDS_DATA": "/api/auth/getCardData",
   "URL_SIGNUP": "/api/auth/signup",
+  "URL_UPDATE_PROFILE": "/api/auth/updateProfile",
 
   "URL_GET_STANDS": "/api/admin/stands/getStands",
   "URL_CREATE_STAND": "/api/admin/stands/createStand",

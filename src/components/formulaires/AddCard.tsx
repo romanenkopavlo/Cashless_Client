@@ -15,11 +15,12 @@ interface AddCardFormProps {
 }
 
 export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
-    const {register, handleSubmit, formState:{errors}, reset} = useForm<FormData>();
+    const {register, handleSubmit, formState:{errors}, reset, clearErrors} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
     const {addCard} = useUserCardsStore();
 
     const onSubmit:SubmitHandler<FormData>=data => {
+        removeErrors();
         AddCard(data.cardNumber)
             .then(data => {
                 reset();
@@ -55,6 +56,15 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
         },
     });
 
+    const handleChange = () => {
+        removeErrors();
+    }
+
+    const removeErrors = () => {
+        if (errors.cardNumber) clearErrors('cardNumber');
+        if (errorMessage) setErrorMessage('');
+    }
+
     return (
         <Box
             sx={{
@@ -77,6 +87,7 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
                 <Grid2 container spacing={2} sx={{ mb: 2 }}>
                         <TextFieldCustom
                             {...register("cardNumber", ValidationCard.cardNumber)}
+                            onChange={handleChange}
                             label="Numéro de la carte"
                             variant="outlined"
                             color="secondary"

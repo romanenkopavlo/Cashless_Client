@@ -126,7 +126,7 @@ export const GestionFestivaliers = () => {
     };
 
     const handleSubmit = async () => {
-        const newErrors = validateForm(formData, isEditing, password);
+        const newErrors = validateForm(formData, isEditing, password, null);
 
         setErrors(newErrors);
 

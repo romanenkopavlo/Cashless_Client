@@ -156,7 +156,7 @@ export const GestionBenevoles = () => {
     const handleSubmit = async () => {
         cleanErrors();
 
-        const newErrors = validateForm(formData, isEditing, password);
+        const newErrors = validateForm(formData, isEditing, password, null);
 
         setErrors(newErrors);
 
@@ -166,7 +166,7 @@ export const GestionBenevoles = () => {
 
         if (isEditing) {
             try {
-                const data = await UpdateBenevole(formData.id, formData.nom, formData.prenom, null, formData.login, null)
+                const data = await UpdateBenevole(formData.id, formData.nom, formData.prenom, null, formData.login, null);
                 setSuccessMessage(data.message);
                 updateBenevole(data.updatedBenevole);
                 updateTransactions(setTransactions);

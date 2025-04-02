@@ -1,6 +1,6 @@
 import { ValidationConnexion } from "../components/formulaires/ValidationConnexion.ts";
 
-export const validateForm = (formData: { nom: string; prenom: string; nom_stand?: string, login: string; }, isEditing: boolean, password: string): { [key: string]: string | null } => {
+export const validateForm = (formData: { nom: string; prenom: string; nom_stand?: string, login: string; }, isEditing: boolean, password: string, passwordNew: string | null): { [key: string]: string | null } => {
     const newErrors: { [key: string]: string | null } = {};
 
     if (!formData.nom.trim()) {
@@ -26,6 +26,14 @@ export const validateForm = (formData: { nom: string; prenom: string; nom_stand?
             newErrors.password = ValidationConnexion.password.required;
         } else if (!ValidationConnexion.password.pattern.value.test(password)) {
             newErrors.password = ValidationConnexion.password.pattern.message;
+        }
+
+        if (passwordNew !== null) {
+            if (!passwordNew.trim()) {
+                newErrors.passwordNew = ValidationConnexion.password.required;
+            } else if (!ValidationConnexion.password.pattern.value.test(passwordNew)) {
+                newErrors.passwordNew = ValidationConnexion.password.pattern.message;
+            }
         }
     }
 

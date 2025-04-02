@@ -146,6 +146,8 @@ export const GestionCartes = () => {
                                     <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "150px"}}>Montant (€)</TableCell>
                                     <TableCell align="center"
+                                               sx={{border: "1px solid #ddd", width: "150px"}}>Statut</TableCell>
+                                    <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "150px"}}>Utilisateur</TableCell>
                                     <TableCell align="center"
                                                sx={{border: "1px solid #ddd", width: "120px"}}>Actions</TableCell>
@@ -173,6 +175,11 @@ export const GestionCartes = () => {
                                             }}>{card.montant}</TableCell>
                                             <TableCell align="center" sx={{
                                                 border: "1px solid #ddd",
+                                                width: "100px",
+                                                color: card.is_active ? "#2e7d32" : "#d32f2f",
+                                            }}>{card.is_active ? "Active" : "Désactivée"}</TableCell>
+                                            <TableCell align="center" sx={{
+                                                border: "1px solid #ddd",
                                                 width: "150px"
                                             }}>{card.login_utilisateur ? card.login_utilisateur : '—'}</TableCell>
                                             <TableCell align="center" sx={{border: "1px solid #ddd", width: "120px"}}>
@@ -183,7 +190,7 @@ export const GestionCartes = () => {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} align="center">Aucune carte trouvée.</TableCell>
+                                        <TableCell colSpan={7} align="center">Aucune carte trouvée.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>

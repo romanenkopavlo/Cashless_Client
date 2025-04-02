@@ -50,10 +50,13 @@ import {updateTransactions} from "../../services/transactions.ts";
 import {useTransactionsStore} from "../../stores/TransactionsStore.ts";
 import {SuccessMessage} from "../../components/SuccessMessage.tsx";
 import {styleCustomRole} from "../../styles/CustomInputField.ts";
+import {updateStatistics} from "../../services/statistics.ts";
+import {useStatisticsStore} from "../../stores/StatisticsStore.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
     const {categories} = useCategoriesStore();
+    const {setStatistics} = useStatisticsStore();
     const {setTransactions} = useTransactionsStore();
     const {benevoles, setBenevoles} = useBenevolesStore();
     const {isFetchedStands, setIsFetchedStands} = useVariablesStore();
@@ -169,6 +172,7 @@ export const GestionStands = () => {
                 setSuccessMessage(data.message);
                 updateStand(data.updatedStand);
                 updateTransactions(setTransactions);
+                updateStatistics(setStatistics, null);
                 handleClose();
             } catch (error) {
                 if (error instanceof Error) {
