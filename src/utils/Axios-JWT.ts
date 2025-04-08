@@ -54,6 +54,7 @@ export const AxiosJwt = () => {
                         useAuthenticationJWTStore.getState().setAccessToken(new Token(null));
                         window.location.href = '/login';
                     } else {
+                        alert("L'erreur du serveur.");
                         console.error('Le refresh token a expiré ou autre erreur :', e);
                     }
                 }
