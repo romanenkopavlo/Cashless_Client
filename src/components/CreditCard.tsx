@@ -94,10 +94,14 @@ export const CardFestival = ({ number, balance, is_active, id }: CardFestivalPro
     const handleConfirmation = () => {
         ActivationCard(number, tempIsActive)
             .then((data) => {
-                setSuccessMessage(data.message);
-                updateCard(data.updatedCard);
-                setTempIsActive(!tempIsActive);
-                setOpenDialog(false);
+                if (data) {
+                    setSuccessMessage(data.message);
+                    updateCard(data.updatedCard);
+                    setTempIsActive(!tempIsActive);
+                    setOpenDialog(false);
+                } else {
+                    setError("Une erreur s'est produite. Veuillez réessayer.");
+                }
             })
             .catch((error) => {
                 console.error("Erreur lors de l'activation ou de la désactivation de la carte:", error);
