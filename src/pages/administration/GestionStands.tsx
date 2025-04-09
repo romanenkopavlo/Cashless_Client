@@ -41,7 +41,7 @@ import {GestionCategories} from "../../components/gestions/GestionCategoriesStan
 import {useCategoriesStore} from "../../stores/CategoriesStore.ts";
 import {useBenevolesStore} from "../../stores/BenevolesStore.ts";
 import {GetBenevoles} from "../../services_REST/serveur/admin/benevoles/GetBenevoles.ts";
-import {updateStands} from "../../services/stands.ts";
+import {updateCategoriesStands, updateStands} from "../../services/stands.ts";
 import Benevole from "../../models/Benevole.ts";
 import {AffectationBenevole} from "../../services_REST/serveur/admin/benevoles/AffectationBenevole.ts";
 import {separerBenevoles} from "../../services/benevoles.ts";
@@ -55,7 +55,7 @@ import {useStatisticsStore} from "../../stores/StatisticsStore.ts";
 
 export const GestionStands = () => {
     const {stands, setStands, addStand, updateStand, deleteStand} = useStandsStore();
-    const {categories} = useCategoriesStore();
+    const {categories, setCategories} = useCategoriesStore();
     const {setStatistics} = useStatisticsStore();
     const {setTransactions} = useTransactionsStore();
     const {benevoles, setBenevoles} = useBenevolesStore();
@@ -83,9 +83,12 @@ export const GestionStands = () => {
     useEffect(() => {
         if (!isFetchedStands) {
             setIsFetchedStands(true);
-            updateStands(setStands);
+            (async () => {
+                await updateStands(setStands);
+                await updateCategoriesStands(setCategories);
+            })();
         }
-    }, [isFetchedStands, setStands, setIsFetchedStands]);
+    }, [isFetchedStands, setStands, setCategories, setIsFetchedStands]);
 
     useEffect(() => {
         if (successAffMessage) {

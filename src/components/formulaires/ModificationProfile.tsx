@@ -101,9 +101,9 @@ export const ModificationProfile = ({ open, formData }: { open: boolean, formDat
             <Dialog open={openTemp} onClose={handleClose}>
                 <DialogTitle>Modification du profil</DialogTitle>
                 <DialogContent>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Nom" name="nom" value={formDataTemp.nom} onChange={handleChange} error={!!errors.nom} helperText={errors.nom}/>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Prénom" name="prenom" value={formDataTemp.prenom} onChange={handleChange} error={!!errors.prenom} helperText={errors.prenom}/>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Login" name="login" value={formDataTemp.login} onChange={handleChange} error={!!errors.username} helperText={errors.username}/>
+                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Nom *" name="nom" value={formDataTemp.nom} onChange={handleChange} error={!!errors.nom} helperText={errors.nom}/>
+                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Prénom *" name="prenom" value={formDataTemp.prenom} onChange={handleChange} error={!!errors.prenom} helperText={errors.prenom}/>
+                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Login *" name="login" value={formDataTemp.login} onChange={handleChange} error={!!errors.username} helperText={errors.username}/>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Mot de passe actuel" name="password_current" type="password" onChange={handlePasswordCurrentChange} error={!!errors.password} helperText={errors.password}/>
                     <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Nouveau mot de passe" name="password_new" type="password" onChange={handlePasswordNewChange} error={!!errors.passwordNew} helperText={errors.passwordNew}/>
                     {error && (

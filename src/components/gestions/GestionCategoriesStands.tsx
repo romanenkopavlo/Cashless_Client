@@ -10,23 +10,20 @@ import {
     Typography
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Categorie from "../../models/Categorie.ts";
-import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import { useCategoriesStore } from "../../stores/CategoriesStore.ts";
 import * as React from "react";
 import {UpdateCategory} from "../../services_REST/serveur/admin/categories/UpdateCategory.ts";
 import {CreateCategory} from "../../services_REST/serveur/admin/categories/CreateCategory.ts";
 import {DeleteCategory} from "../../services_REST/serveur/admin/categories/DeleteCategory.ts";
-import {GetCategories} from "../../services_REST/serveur/admin/categories/GetCategories.ts";
 import {useStandsStore} from "../../stores/StandsStore.ts";
 import {GetStands} from "../../services_REST/serveur/admin/stands/GetStands.ts";
 import {SuccessMessage} from "../SuccessMessage.tsx";
 
 export const GestionCategories = () => {
-    const {categories, setCategories, addCategorie, updateCategorie, deleteCategorie} = useCategoriesStore();
+    const {categories, addCategorie, updateCategorie, deleteCategorie} = useCategoriesStore();
     const {setStands} = useStandsStore();
-    const {isFetchedCategories, setIsFetchedCategories} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
     const [nomError, setNomError] = useState<string | null>(null);
@@ -36,25 +33,6 @@ export const GestionCategories = () => {
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Categorie>(new Categorie(0, ""));
-
-    useEffect(() => {
-        if (!isFetchedCategories) {
-            setIsFetchedCategories(true)
-
-            GetCategories()
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
-                        setCategories([]);
-                    } else {
-                        setCategories(data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des catégories:", error);
-                    setCategories([]);
-                });
-        }
-    }, [isFetchedCategories, setCategories, setIsFetchedCategories]);
 
     const styleCustom = {
         '& label.Mui-focused': {

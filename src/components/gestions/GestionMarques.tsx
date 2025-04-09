@@ -10,8 +10,7 @@ import {
     Typography
 } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
-import {useEffect, useState} from "react";
-import {useVariablesStore} from "../../stores/VariablesStore.ts";
+import {useState} from "react";
 import * as React from "react";
 import { usePhonesStore } from "../../stores/PhonesStore.ts";
 import { useMarquesStore } from "../../stores/MarquesStore.ts";
@@ -20,14 +19,12 @@ import {UpdateMarque} from "../../services_REST/serveur/admin/marques/UpdateMarq
 import {GetPhones} from "../../services_REST/serveur/admin/phones/GetPhones.ts";
 import {CreateMarque} from "../../services_REST/serveur/admin/marques/CreateMarque.ts";
 import {DeleteMarque} from "../../services_REST/serveur/admin/marques/DeleteMarque.ts";
-import {GetMarques} from "../../services_REST/serveur/admin/marques/GetMarques.ts";
 import {SuccessMessage} from "../SuccessMessage.tsx";
 import {SnackbarError} from "../SnackbarError.tsx";
 
 export const GestionMarques = () => {
-    const {marques, setMarques, addMarque, updateMarque, deleteMarque} = useMarquesStore();
+    const {marques, addMarque, updateMarque, deleteMarque} = useMarquesStore();
     const {setPhones} = usePhonesStore();
-    const {isFetchedMarques, setIsFetchedMarques} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
     const [errorSnackbar, setErrorSnackbar] = useState<string | null>(null);
@@ -38,25 +35,6 @@ export const GestionMarques = () => {
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Marque>(new Marque(0, ""));
-
-    useEffect(() => {
-        if (!isFetchedMarques) {
-            setIsFetchedMarques(true)
-
-            GetMarques()
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
-                        setMarques([]);
-                    } else {
-                        setMarques(data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des marques:", error);
-                    setMarques([]);
-                });
-        }
-    }, [isFetchedMarques, setMarques, setIsFetchedMarques]);
 
     const styleCustom = {
         '& label.Mui-focused': {

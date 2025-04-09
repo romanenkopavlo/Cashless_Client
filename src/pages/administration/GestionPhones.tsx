@@ -25,10 +25,11 @@ import {GetPhones} from "../../services_REST/serveur/admin/phones/GetPhones.ts";
 import {DeletePhone} from "../../services_REST/serveur/admin/phones/DeletePhone.ts";
 import {SuccessMessage} from "../../components/SuccessMessage.tsx";
 import {SnackbarError} from "../../components/SnackbarError.tsx";
+import {GetMarques} from "../../services_REST/serveur/admin/marques/GetMarques.ts";
 
 export const GestionPhones = () => {
     const {phones, setPhones, addPhone, updatePhone, deletePhone} = usePhonesStore();
-    const {marques} = useMarquesStore();
+    const {marques, setMarques} = useMarquesStore();
     const {isFetchedPhones, setIsFetchedPhones} = useVariablesStore();
 
     const [error, setError] = useState<string | null>(null);
@@ -44,22 +45,35 @@ export const GestionPhones = () => {
 
     useEffect(() => {
         if (!isFetchedPhones) {
-            setIsFetchedPhones(true)
-
-            GetPhones()
-                .then((data) => {
-                    if (!data || !Array.isArray(data)) {
+            (async () => {
+                setIsFetchedPhones(true);
+                try {
+                    const dataPhones = await GetPhones();
+                    if (!dataPhones || !Array.isArray(dataPhones)) {
                         setPhones([]);
                     } else {
-                        setPhones(data);
+                        setPhones(dataPhones);
                     }
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la récupération des téléphones:", error);
+                    const dataMarques = await GetMarques();
+                    if (!dataMarques || !Array.isArray(dataMarques)) {
+                        setMarques([]);
+                    } else {
+                        setMarques(dataMarques);
+                    }
+                } catch (error) {
                     setPhones([]);
-                });
+                    setMarques([]);
+                    if (error instanceof Error) {
+                        console.error("Erreur lors de la récupération des téléphones:", error);
+                        setError(error.message);
+                    } else {
+                        console.error("Erreur inconnue:", error);
+                        setError("Une erreur inconnue est survenue.");
+                    }
+                }
+            })();
         }
-    }, [isFetchedPhones, setPhones, setIsFetchedPhones]);
+    }, [isFetchedPhones, setPhones, setIsFetchedPhones, setMarques]);
 
     const styleCustom = {
         '& label.Mui-focused': {
@@ -223,6 +237,7 @@ export const GestionPhones = () => {
                 </div>
 
                 <GestionMarques/>
+
                 <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>{isEditing ? "Modifier le téléphone" : "Ajouter un téléphone"}</DialogTitle>
                     <DialogContent>

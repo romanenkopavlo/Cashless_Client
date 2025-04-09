@@ -2,9 +2,11 @@ import Stand from "../models/Stand.ts";
 import {GetStands} from "../services_REST/serveur/admin/stands/GetStands.ts";
 import Benevole from "../models/Benevole.ts";
 import React from "react";
+import Categorie from "../models/Categorie.ts";
+import {GetCategories} from "../services_REST/serveur/admin/categories/GetCategories.ts";
 
-export const updateStands = (setStands: (newStands: Stand[]) => void) => {
-    GetStands()
+export const updateStands = async (setStands: (newStands: Stand[]) => void) => {
+    await GetStands()
         .then((data) => {
             if (!data || !Array.isArray(data)) {
                 setStands([]);
@@ -15,6 +17,21 @@ export const updateStands = (setStands: (newStands: Stand[]) => void) => {
         .catch((error) => {
             console.error("Erreur lors de la récupération des stands:", error);
             setStands([]);
+        });
+}
+
+export const updateCategoriesStands = async (setCategories: (newCategories: Categorie[]) => void)=> {
+    await GetCategories()
+        .then((data) => {
+            if (!data || !Array.isArray(data)) {
+                setCategories([]);
+            } else {
+                setCategories(data);
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des catégories:", error);
+            setCategories([]);
         });
 }
 

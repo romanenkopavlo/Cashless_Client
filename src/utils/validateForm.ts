@@ -22,17 +22,17 @@ export const validateForm = (formData: { nom: string; prenom: string; nom_stand?
     }
 
     if (!isEditing) {
-        if (!password.trim()) {
-            newErrors.password = ValidationConnexion.password.required;
-        } else if (!ValidationConnexion.password.pattern.value.test(password)) {
-            newErrors.password = ValidationConnexion.password.pattern.message;
+        if (password.trim()) {
+            if (!ValidationConnexion.password.pattern.value.test(password)) {
+                newErrors.password = ValidationConnexion.password.pattern.message;
+            }
         }
 
         if (passwordNew !== null) {
-            if (!passwordNew.trim()) {
-                newErrors.passwordNew = ValidationConnexion.password.required;
-            } else if (!ValidationConnexion.password.pattern.value.test(passwordNew)) {
-                newErrors.passwordNew = ValidationConnexion.password.pattern.message;
+            if (passwordNew.trim()) {
+                if (!ValidationConnexion.password.pattern.value.test(passwordNew)) {
+                    newErrors.passwordNew = ValidationConnexion.password.pattern.message;
+                }
             }
         }
     }
