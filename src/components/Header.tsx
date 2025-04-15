@@ -19,8 +19,8 @@ import {
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
 
 export const Header = () => {
-    const {accessToken} = useAuthenticationJWTStore()
-    const user = getDecodedToken(accessToken?.token)
+    const {accessToken} = useAuthenticationJWTStore();
+    const user = getDecodedToken(accessToken?.token);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

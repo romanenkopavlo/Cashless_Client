@@ -24,9 +24,13 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
         AddCard(data.cardNumber)
             .then(data => {
                 reset();
-                addCard(data.newCard);
-                setErrorMessage('');
-                setSuccessMessage(data.message);
+                if (data) {
+                    addCard(data.newCard);
+                    setErrorMessage('');
+                    setSuccessMessage(data.message);
+                } else {
+                    setErrorMessage("Une erreur s'est produite. Veuillez réessayer.");
+                }
             })
             .catch (error => {
                 console.log(error)

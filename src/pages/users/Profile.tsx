@@ -37,7 +37,7 @@ export const Profile = () => {
     return (
         <>
             <Header />
-            <div style={{height: "1400px"}}>
+            <div style={{height: "1800px"}}>
             <Container maxWidth="sm" sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
                 <Card sx={{ width: "100%", boxShadow: 6, borderRadius: 3, p: 3, textAlign: "center" }}>
                     <CardContent>
@@ -51,13 +51,46 @@ export const Profile = () => {
                             Rôle: {user?.role}
                         </Typography>
 
+                        <Button onClick={() => handleOpen(user)} sx={{color: "#7f5656"}}>Modifier le profil</Button>
+
+                        {user?.noms_stands && (
+                            <Typography variant="body2" sx={{ mt: 1, color: "gray", fontWeight: "bold" }}>
+                                {user.noms_stands.split(',').length > 1 ? "Affectations :" : "Affectation :"}
+                            </Typography>
+                        )}
+
+                        <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 1 }}>
+                            {user?.noms_stands?.split(',').map((stand, index) => (
+                                <Box
+                                    key={index}
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        border: "1px solid #e0e0e0",
+                                        borderRadius: 2,
+                                        px: 2,
+                                        py: 1,
+                                        backgroundColor: "#f9f9f9"
+                                    }}
+                                >
+                                    <Typography variant="body2" fontWeight="medium">
+                                        🏪 {stand.trim()}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: "gray" }}>
+                                        {user?.noms_permissions?.split(',')[index]?.trim() === "Créditeur" && "💰"}
+                                        {user?.noms_permissions?.split(',')[index]?.trim() === "Débiteur" && "📤"}
+                                        {user?.noms_permissions?.split(',')[index]?.trim() || "-"}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </Box>
+
                         {successMessage && (
                             <Alert severity="success" sx={{ mt: 2, mb: 2, justifyContent: "center", textAlign: "center" }}>
                                 {successMessage}
                             </Alert>
                         )}
-
-                        <Button onClick={() => handleOpen(user)} sx={{color: "#7f5656"}}>Modifier le profil</Button>
 
                         <Box sx={{ mt: 3 }}>
                             <AddCardForm setSuccessMessage={setSuccessMessage} />
