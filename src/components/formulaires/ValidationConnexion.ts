@@ -13,7 +13,7 @@ export const ValidationConnexion = {
             {
                 value: /^[a-zA-Z0-9._-]{3,20}$/,
                 message:
-                    "Le Login doit  contenir entre 3 et 20 caractères, ne peut inclure que des lettres, chiffres, points, tirets bas ou tirets.",
+                    "Le Login doit contenir entre 3 et 20 caractères, ne peut inclure que des lettres, chiffres, points, tirets bas ou tirets.",
             },
     },
     surname: {
