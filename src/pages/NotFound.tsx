@@ -26,7 +26,7 @@ export const NotFound = () => {
                 }}
             />
             <Typography variant="h3" gutterBottom sx={{ color: '#a57272', fontWeight: 'bold' }}>
-                Oups ! Page non trouvée
+                Oups! Page non trouvée
             </Typography>
             <Typography variant="h5" color="text.secondary" sx={{ marginBottom: 3 }}>
                 Désolé, nous ne pouvons pas trouver la page que vous cherchez.
