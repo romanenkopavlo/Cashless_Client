@@ -1,4 +1,4 @@
-import {AppBar, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar} from "@mui/material";
 import EuroIcon from '@mui/icons-material/Euro';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -17,6 +17,7 @@ import {
     Storefront
 } from "@mui/icons-material";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
+import logo from "../assets/logo.png";
 
 export const Header = () => {
     const {accessToken} = useAuthenticationJWTStore();
@@ -43,9 +44,15 @@ export const Header = () => {
         <AppBar position="sticky" className="header">
             <Toolbar>
                 <Container maxWidth="lg" className="header-container">
-                    <Typography variant="h6" className="logo">
-                        Château de Freycinet
-                    </Typography>
+                    <Link to="/">
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Avatar
+                                alt="Château de Freycinet"
+                                src={logo}
+                                sx={{ width: 80, height: 80 }}
+                            />
+                        </Box>
+                    </Link>
                     <nav>
                         <ul className="nav-list">
                             <li><Link to="/" className="nav-link">Accueil</Link></li>

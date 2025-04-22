@@ -18,6 +18,7 @@ import {GestionCartes} from "./pages/administration/GestionCartes.tsx";
 import {GestionPhones} from "./pages/administration/GestionPhones.tsx";
 import {GestionTerminaux} from "./pages/administration/GestionTerminaux.tsx";
 import {Statistiques} from "./pages/administration/Statistiques.tsx";
+import {NotFound} from "./pages/NotFound.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -47,7 +48,8 @@ const router = createBrowserRouter(([
                     {path: "/manage-transactions", element: <GestionTransactions/>},
                     {path: "/manage-benevoles", element: <GestionBenevoles/>},
                 ]
-            }
+            },
+            { path: "*", element: <NotFound/> },
         ]
     }
 ]))
