@@ -1,18 +1,34 @@
 import {Header} from "../components/Header"
 import {Footer} from "../components/Footer"
-import BackgroundImage from "../assets/accueil_bg.jpg"
+import BackgroundImage1 from "../assets/accueil_bg_1.jpg"
+import BackgroundImage2 from "../assets/accueil_bg_2.jpg"
+import BackgroundImage3 from "../assets/accueil_bg_3.jpg"
 import ChateauImage1 from "../assets/image1.jpg"
 import ChateauImage2 from "../assets/image2.jpg"
 import ChateauImage3 from "../assets/image3.jpg"
 import {Box, Card, CardMedia, Container, Grid2, Typography} from "@mui/material"
+import { motion } from "framer-motion"
+import {useEffect, useState} from "react"
 
 export const Home = () => {
+    const backgrounds = [BackgroundImage1, BackgroundImage2, BackgroundImage3];
+    const [bgIndex, setBgIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setBgIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    });
+
     return (
         <>
             <Header/>
             <Box
+                component={motion.div} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
                 sx={{
-                    backgroundImage: `url(${BackgroundImage})`,
+                    backgroundImage: `url(${backgrounds[bgIndex]})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     height: '70vh',
@@ -20,10 +36,11 @@ export const Home = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#fff',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    transition: 'background-image 1s ease-in-out'
                 }}
             >
-                <Typography variant="h2" component="div" sx={{ backgroundColor: 'rgba(0,0,0,0.5)', p: 3, borderRadius: 2 }}>
+                <Typography variant="h2" sx={{ backgroundColor: 'rgba(0,0,0,0.5)', p: 3, borderRadius: 2 }}>
                     Château de Freycinet
                 </Typography>
             </Box>

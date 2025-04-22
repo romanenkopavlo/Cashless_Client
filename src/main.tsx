@@ -19,6 +19,8 @@ import {GestionPhones} from "./pages/administration/GestionPhones.tsx";
 import {GestionTerminaux} from "./pages/administration/GestionTerminaux.tsx";
 import {Statistiques} from "./pages/administration/Statistiques.tsx";
 import {NotFound} from "./pages/NotFound.tsx";
+import {About} from "./pages/About.tsx";
+import {Contact} from "./pages/Contact.tsx";
 
 const router = createBrowserRouter(([
     {
@@ -26,6 +28,8 @@ const router = createBrowserRouter(([
         element: <App/>,
         children: [
             {path: "/", element: <Home/>},
+            {path: "/about", element: <About/>},
+            {path: "/contact", element: <Contact/>},
             {path: "/login", element: <Login/>},
             {path: "/signup", element: <Signup/>},
             {
