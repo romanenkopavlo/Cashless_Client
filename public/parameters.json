@@ -6,23 +6,50 @@
   "URL_LOGOUT": "/api/auth/logout",
   "URL_BALANCE": "/api/auth/verifyBalance",
   "URL_ADD_CARD": "/api/auth/addCard",
-  "URL_GET_CARD_DATA": "/api/auth/getCardData",
-  "URL_GET_TRANSACTIONS": "/api/auth/getTransactions",
+  "URL_ACTIVATION_CARD": "/api/auth/activateCard",
+  "URL_GET_CARDS_DATA": "/api/auth/getCardData",
   "URL_SIGNUP": "/api/auth/signup",
+  "URL_UPDATE_PROFILE": "/api/auth/updateProfile",
+
   "URL_GET_STANDS": "/api/admin/stands/getStands",
   "URL_CREATE_STAND": "/api/admin/stands/createStand",
   "URL_UPDATE_STAND": "/api/admin/stands/updateStand",
   "URL_DELETE_STAND": "/api/admin/stands/deleteStand",
+
   "URL_GET_FESTIVALIERS": "/api/admin/festivaliers/getFestivaliers",
   "URL_CREATE_FESTIVALIER": "/api/admin/festivaliers/createFestivalier",
   "URL_UPDATE_FESTIVALIER": "/api/admin/festivaliers/updateFestivalier",
   "URL_DELETE_FESTIVALIER": "/api/admin/festivaliers/deleteFestivalier",
+
   "URL_GET_BENEVOLES": "/api/admin/benevoles/getBenevoles",
   "URL_CREATE_BENEVOLE": "/api/admin/benevoles/createBenevole",
   "URL_UPDATE_BENEVOLE": "/api/admin/benevoles/updateBenevole",
   "URL_DELETE_BENEVOLE": "/api/admin/benevoles/deleteBenevole",
+  "URL_AFFECTATION_BENEVOLE": "/api/admin/benevoles/affecterBenevole",
+
   "URL_GET_CATEGORIES": "/api/admin/categories/getCategories",
   "URL_CREATE_CATEGORY": "/api/admin/categories/createCategory",
   "URL_UPDATE_CATEGORY": "/api/admin/categories/updateCategory",
-  "URL_DELETE_CATEGORY": "/api/admin/categories/deleteCategory"
+  "URL_DELETE_CATEGORY": "/api/admin/categories/deleteCategory",
+
+  "URL_GET_PHONES": "/api/admin/phones/getPhones",
+  "URL_UPDATE_PHONE": "/api/admin/phones/updatePhone",
+  "URL_CREATE_PHONE": "/api/admin/phones/createPhone",
+  "URL_DELETE_PHONE": "/api/admin/phones/deletePhone",
+
+  "URL_GET_MARQUES": "/api/admin/marques/getMarques",
+  "URL_UPDATE_MARQUE": "/api/admin/marques/updateMarque",
+  "URL_CREATE_MARQUE": "/api/admin/marques/createMarque",
+  "URL_DELETE_MARQUE": "/api/admin/marques/deleteMarque",
+
+  "URL_GET_CARDS": "/api/admin/cards/getCards",
+  "URL_DELETE_CARD": "/api/admin/cards/deleteCard",
+  "URL_READ_FILE_CARDS": "/api/admin/cards/readFileCards",
+
+  "URL_GET_TERMINALS": "/api/admin/terminals/getTerminals",
+  "URL_DELETE_TERMINAL": "/api/admin/terminals/deleteTerminal",
+
+  "URL_ADMIN_GET_TRANSACTIONS": "/api/admin/transactions/getTransactions",
+
+  "URL_GET_STATISTICS": "/api/admin/statistics/getStatistics"
 }

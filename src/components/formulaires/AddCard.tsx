@@ -4,10 +4,10 @@ import { FaCreditCard } from "react-icons/fa";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {AddCard} from "../../services_REST/serveur/users/AddCard.ts";
 import {ValidationCard} from "./ValidationCard.ts";
-import {useCardStore} from "../../store/CardStore.ts";
+import {useUserCardsStore} from "../../stores/UserCardsStore.ts";
 
 interface FormData {
-    cardNumber: number
+    cardNumber: number;
 }
 
 interface AddCardFormProps {
@@ -15,19 +15,21 @@ interface AddCardFormProps {
 }
 
 export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
-    const {register, handleSubmit, formState:{errors}} = useForm<FormData>();
+    const {register, handleSubmit, formState:{errors}, reset, clearErrors} = useForm<FormData>();
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const {setCard} = useCardStore()
+    const {addCard} = useUserCardsStore();
 
     const onSubmit:SubmitHandler<FormData>=data => {
+        removeErrors();
         AddCard(data.cardNumber)
-            .then(card => {
-                if (card != null) {
-                    setCard(card)
-                    console.log(card)
-                    console.log("Balance: " + card.montant)
-                    console.log("Number: " + card.numero)
-                    setSuccessMessage("Carte ajoutée avec succès !");
+            .then(data => {
+                reset();
+                if (data) {
+                    addCard(data.newCard);
+                    setErrorMessage('');
+                    setSuccessMessage(data.message);
+                } else {
+                    setErrorMessage("Une erreur s'est produite. Veuillez réessayer.");
                 }
             })
             .catch (error => {
@@ -58,6 +60,15 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
         },
     });
 
+    const handleChange = () => {
+        removeErrors();
+    }
+
+    const removeErrors = () => {
+        if (errors.cardNumber) clearErrors('cardNumber');
+        if (errorMessage) setErrorMessage('');
+    }
+
     return (
         <Box
             sx={{
@@ -80,7 +91,8 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
                 <Grid2 container spacing={2} sx={{ mb: 2 }}>
                         <TextFieldCustom
                             {...register("cardNumber", ValidationCard.cardNumber)}
-                            label="Numéro de la carte"
+                            onChange={handleChange}
+                            placeholder="Numéro de la carte"
                             variant="outlined"
                             color="secondary"
                             fullWidth

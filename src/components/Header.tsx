@@ -1,10 +1,14 @@
-import {AppBar, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar} from "@mui/material";
+import EuroIcon from '@mui/icons-material/Euro';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import PieChartIcon from "@mui/icons-material/PieChart";
 import {Link} from "react-router";
 import './Header.css';
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
 import {useState} from "react";
 import * as React from "react";
 import {
@@ -13,10 +17,11 @@ import {
     Storefront
 } from "@mui/icons-material";
 import {getDecodedToken} from "../utils/TokenDecodage.ts";
+import logo from "../assets/logo.png";
 
 export const Header = () => {
-    const {accessToken} = useAuthenticationJWTStore()
-    const user = getDecodedToken(accessToken?.token)
+    const {accessToken} = useAuthenticationJWTStore();
+    const user = getDecodedToken(accessToken?.token);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -39,9 +44,15 @@ export const Header = () => {
         <AppBar position="sticky" className="header">
             <Toolbar>
                 <Container maxWidth="lg" className="header-container">
-                    <Typography variant="h6" className="logo">
-                        Château de Freycinet
-                    </Typography>
+                    <Link to="/">
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Avatar
+                                alt="Château de Freycinet"
+                                src={logo}
+                                sx={{ width: 80, height: 80 }}
+                            />
+                        </Box>
+                    </Link>
                     <nav>
                         <ul className="nav-list">
                             <li><Link to="/" className="nav-link">Accueil</Link></li>
@@ -53,7 +64,7 @@ export const Header = () => {
                         <div className="header-buttons">
                             {user?.role === "Administrateur" &&
                                 <>
-                                    <IconButton color="inherit" onClick={handleMenuOpen}>
+                                    <IconButton title="Menu" color="inherit" onClick={handleMenuOpen}>
                                         <MenuIcon fontSize="large" sx={{ color: "#FFFFFF" }} />
                                     </IconButton>
                                     <Menu
@@ -71,16 +82,24 @@ export const Header = () => {
                                     >
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-cards" sx={menuItemStyle}><CreditCard sx={{ marginRight: '10px' }} /> Gestion des cartes</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-stands" sx={menuItemStyle}><Storefront sx={{ marginRight: '10px' }} /> Gestion des stands</MenuItem>
-                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-festivaliers" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des festivaliers</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-terminals" sx={menuItemStyle}><PointOfSaleIcon sx={{ marginRight: '10px' }} /> Gestion des terminaux</MenuItem>
                                         <MenuItem onClick={handleMenuClose} component={Link} to="/manage-benevoles" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des bénévoles</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-festivaliers" sx={menuItemStyle}><Groups sx={{ marginRight: '10px' }} /> Gestion des festivaliers</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-phones" sx={menuItemStyle}><SmartphoneIcon sx={{ marginRight: '10px' }} /> Gestion des téléphones</MenuItem>
+                                        <MenuItem onClick={handleMenuClose} component={Link} to="/manage-transactions" sx={menuItemStyle}><EuroIcon sx={{ marginRight: '10px' }} /> Gestion des transactions</MenuItem>
                                     </Menu>
+                                    <Link to="/statistiques" title="Statistiques">
+                                        <IconButton color="inherit">
+                                            <PieChartIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
+                                        </IconButton>
+                                    </Link>
                                 </>}
-                            <Link to="/profile">
+                            <Link to="/profile" title="Profil">
                                 <IconButton color="inherit">
                                     <AccountCircleIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
                                 </IconButton>
                             </Link>
-                            <Link to="/logout">
+                            <Link to="/logout" title="Déconnexion">
                                 <IconButton color="inherit">
                                     <LogoutIcon fontSize="large" sx={{ color: "#FFFFFF" }}/>
                                 </IconButton>

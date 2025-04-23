@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router";
 import {useEffect} from "react";
 import {Disconnect} from "../../services_REST/serveur/connection/Disconnect.ts";
-import {useAuthenticationJWTStore} from "../../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../../stores/AuthenticationJWT.ts";
 import Token from "../../models/Token.ts";
 import {ViderStores} from "../../utils/ViderStores.ts";
 

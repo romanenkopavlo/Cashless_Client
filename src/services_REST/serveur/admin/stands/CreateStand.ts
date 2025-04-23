@@ -5,15 +5,15 @@ import {AxiosJwt} from "../../../../utils/Axios-JWT.ts";
 
 const URL_CREATE_STAND = parameters.URL_CREATE_STAND
 
-export const CreateStand = async(nom_stand: string, solde: number, nom_categorie: string) => {
+export const CreateStand = async(nom_stand: string, nom_categorie: string) => {
     try {
         const axiosJWT = AxiosJwt()
-        const response = await axiosJWT.post(`${URL_CREATE_STAND}`, {nom_stand, solde, nom_categorie});
+        const response = await axiosJWT.post(`${URL_CREATE_STAND}`, {nom_stand, nom_categorie});
         console.log(response.data)
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && [400, 401, 404, 409, 500, 501].includes(error.response.status)) {
                 throw new Error(error.response.data.message);
             }
         }

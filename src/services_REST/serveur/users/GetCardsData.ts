@@ -3,17 +3,17 @@ import Card from "../../../models/Card.ts";
 import {AxiosJwt} from "../../../utils/Axios-JWT.ts";
 import {AxiosError} from "axios";
 
-const URL_GET_CARD_DATA = parameters.URL_GET_CARD_DATA
+const URL_GET_CARDS_DATA = parameters.URL_GET_CARDS_DATA
 
-export const GetCardData = async(): Promise<Card | null> => {
+export const GetCardsData = async(): Promise<Card[] | null> => {
     try {
         const axiosJWT = AxiosJwt();
-        const response = await axiosJWT.get<Card>(`${URL_GET_CARD_DATA}`);
+        const response = await axiosJWT.get<Card[]>(`${URL_GET_CARDS_DATA}`);
         console.log(`response card:  ${response.data}`)
         return response.data
     } catch (error) {
         if (error instanceof AxiosError) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && [400, 401, 404, 409, 500, 501].includes(error.response.status)) {
                 throw new Error(error.response.data.message);
             }
         }

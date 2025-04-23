@@ -1,0 +1,271 @@
+import {Header} from "../../components/Header.tsx";
+import {Footer} from "../../components/Footer.tsx";
+import {
+    Box,
+    Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem,
+    Paper, Select, SelectChangeEvent,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow, TextField,
+    Typography
+} from "@mui/material";
+import {Delete, Edit} from "@mui/icons-material";
+import * as React from "react";
+import {useVariablesStore} from "../../stores/VariablesStore.ts";
+import {useEffect, useState} from "react";
+import { usePhonesStore } from "../../stores/PhonesStore.ts";
+import Phone from "../../models/Phone.ts";
+import { GestionMarques } from "../../components/gestions/GestionMarques.tsx";
+import {useMarquesStore} from "../../stores/MarquesStore.ts";
+import {UpdatePhone} from "../../services_REST/serveur/admin/phones/UpdatePhone.ts";
+import {CreatePhone} from "../../services_REST/serveur/admin/phones/CreatePhone.ts";
+import {GetPhones} from "../../services_REST/serveur/admin/phones/GetPhones.ts";
+import {DeletePhone} from "../../services_REST/serveur/admin/phones/DeletePhone.ts";
+import {SuccessMessage} from "../../components/SuccessMessage.tsx";
+import {SnackbarError} from "../../components/SnackbarError.tsx";
+import {GetMarques} from "../../services_REST/serveur/admin/marques/GetMarques.ts";
+import {styleCustomInput} from "../../styles/CustomInputField.ts";
+
+export const GestionPhones = () => {
+    const {phones, setPhones, addPhone, updatePhone, deletePhone} = usePhonesStore();
+    const {marques, setMarques} = useMarquesStore();
+    const {isFetchedPhones, setIsFetchedPhones} = useVariablesStore();
+
+    const [error, setError] = useState<string | null>(null);
+    const [errorSnackbar, setErrorSnackbar] = useState<string | null>(null);
+    const [marqueError, setMarqueError] = useState<string | null>(null);
+    const [modeleError, setModeleError] = useState<string | null>(null);
+
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+    const [open, setOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState<Phone>(new Phone(0, "", ""));
+
+    useEffect(() => {
+        if (!isFetchedPhones) {
+            (async () => {
+                setIsFetchedPhones(true);
+                try {
+                    const dataPhones = await GetPhones();
+                    if (!dataPhones || !Array.isArray(dataPhones)) {
+                        setPhones([]);
+                    } else {
+                        setPhones(dataPhones);
+                    }
+                    const dataMarques = await GetMarques();
+                    if (!dataMarques || !Array.isArray(dataMarques)) {
+                        setMarques([]);
+                    } else {
+                        setMarques(dataMarques);
+                    }
+                } catch (error) {
+                    setPhones([]);
+                    setMarques([]);
+                    if (error instanceof Error) {
+                        console.error("Erreur lors de la récupération des téléphones:", error);
+                        setError(error.message);
+                    } else {
+                        console.error("Erreur inconnue:", error);
+                        setError("Une erreur inconnue est survenue.");
+                    }
+                }
+            })();
+        }
+    }, [isFetchedPhones, setPhones, setIsFetchedPhones, setMarques]);
+
+    const handleOpen = (editing = false, phone: Phone | null = null) => {
+        setIsEditing(editing);
+        if (editing && phone) {
+            setFormData(phone);
+        } else {
+            setFormData(new Phone(0, "", ""));
+        }
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setTimeout(() => {
+            setFormData(new Phone(0, "", ""));
+            setIsEditing(false);
+            cleanErrors();
+        }, 300);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        cleanErrors();
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        cleanErrors();
+        setFormData({
+            ...formData,
+            [event.target.name as string]: event.target.value
+        });
+    };
+
+    const handleSubmit = () => {
+        cleanErrors();
+
+        if (formData.nom_marque.trim() === "") {
+            setMarqueError("La marque est obligatoire");
+            return;
+        }
+
+        if (formData.nom_modele.trim() === "") {
+            setModeleError("Le modèle est obligatoire");
+            return;
+        }
+
+        if (isEditing) {
+            UpdatePhone(formData.id_phone, formData.nom_marque, formData.nom_modele)
+                .then((data) => {
+                    setSuccessMessage(data.message);
+                    updatePhone(data.updatedPhone);
+                    handleClose();
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la récupération des téléphones:", error);
+                    setError(error.message)
+                })
+        } else {
+            CreatePhone(formData.nom_marque, formData.nom_modele)
+                .then((data) => {
+                    setSuccessMessage(data.message);
+                    addPhone(data.newPhone);
+                    handleClose();
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de la récupération des téléphones:", error);
+                    setError(error.message)
+                })
+        }
+    };
+
+    const handleDelete = (id: number) => {
+        DeletePhone(id)
+            .then((data) => {
+                setSuccessMessage(data.message);
+                deletePhone(id);
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la suppression des téléphones:", error)
+                setErrorSnackbar(error.message)
+            });
+    };
+
+    const cleanErrors = () => {
+        if (error) setError(null);
+        if (marqueError) setMarqueError(null);
+        if (modeleError) setModeleError(null);
+    }
+
+    return (
+        <>
+            <Header />
+                <Box sx={{ p: 3, textAlign: "center" }}>
+                    <Typography variant="h5" sx={{ mt: 1 }}>
+                        Gestion des téléphones
+                    </Typography>
+                    {marques && marques.length > 0 ? (
+                        <Button variant="contained" onClick={() => handleOpen(false)} style={{ marginTop: "20px", backgroundColor: "#7f5656" }}>
+                            Ajouter un téléphone
+                        </Button>
+                    ) : (
+                        <Typography variant="h6" sx={{ mt: 1 }}>L'ajout d'un téléphone est impossible. Veuillez d'abord ajouter des marques.</Typography>
+                    )}
+                </Box>
+
+                <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
+                <Box sx={{ p: 3 }}>
+                    <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
+                        <Table sx={{ border: "1px solid #ddd" }}>
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>ID</TableCell>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>Marque</TableCell>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>Modèle</TableCell>
+                                    <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {phones && phones.length > 0 ? (
+                                    phones.map((phone) => (
+                                        <TableRow key={phone.id_phone}>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "50px" }}>{phone.id_phone}</TableCell>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "150px" }}>{phone.nom_marque ? phone.nom_marque : '—'}</TableCell>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "100px" }}>{phone.nom_modele}</TableCell>
+                                            <TableCell align="center" sx={{ border: "1px solid #ddd", width: "120px" }}>
+                                                {marques && marques.length > 0 && (<Button onClick={() => handleOpen(true, phone)}><Edit sx={{color: "#7f5656"}}/></Button>)}
+                                                <Button onClick={() => handleDelete(phone.id_phone)} color="error"><Delete /></Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center">Aucun téléphone trouvé.</TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+
+                <GestionMarques/>
+
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>{isEditing ? "Modifier le téléphone" : "Ajouter un téléphone"}</DialogTitle>
+                    <DialogContent>
+                        <FormControl fullWidth margin="dense" sx={styleCustomInput} error={!!marqueError}>
+                            <InputLabel id="marque-label">Marque</InputLabel>
+                            <Select
+                                labelId="marque-label"
+                                label="Marque"
+                                name="nom_marque"
+                                value={formData.nom_marque}
+                                onChange={handleSelectChange}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 180,
+                                            overflow: 'auto',
+                                        },
+                                    },
+                                }}
+                            >
+                                {marques && marques.length > 0 && marques.map((marque) => (
+                                    <MenuItem key={marque.id_marque} value={marque.nom_marque}>
+                                        {marque.nom_marque}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {marqueError && (
+                                <Typography color="error" variant="caption" sx={{mt: 0.5}}>
+                                    {marqueError}
+                                </Typography>
+                            )}
+                        </FormControl>
+                        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Modèle" name="nom_modele" value={formData.nom_modele} onChange={handleChange} error={!!modeleError} helperText={modeleError}/>
+                        {error && (
+                            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                                {error}
+                            </Typography>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} sx={{color: "#7f5656"}}>Annuler</Button>
+                        <Button onClick={handleSubmit} sx={{backgroundColor: "#7f5656"}} variant="contained">{isEditing ? "Modifier" : "Ajouter"}</Button>
+                    </DialogActions>
+                </Dialog>
+
+                <SnackbarError error={errorSnackbar} setError={setErrorSnackbar}/>
+            <Footer />
+        </>
+    )
+}

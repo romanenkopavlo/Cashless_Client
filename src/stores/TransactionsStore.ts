@@ -1,12 +1,12 @@
 import {create} from "zustand";
 import Transaction from "../models/Transaction.ts";
 
-interface InterfaceTransactionStore {
+interface InterfaceTransactionsStore {
     transactions: Transaction[];
     setTransactions: (newTransactions: Transaction[]) => void
 }
 
-export const useTransactionStore = create<InterfaceTransactionStore>((set) => ({
+export const useTransactionsStore = create<InterfaceTransactionsStore>((set) => ({
     transactions: [],
-    setTransactions: (newTransactions) => set({ transactions: newTransactions }),
+    setTransactions: (newTransactions) => set({ transactions: newTransactions })
 }));

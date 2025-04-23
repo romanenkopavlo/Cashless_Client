@@ -1,14 +1,14 @@
 import {create} from "zustand";
 import Categorie from "../models/Categorie.ts";
 
-interface InterfaceCategorieStore {
+interface InterfaceCategoriesStore {
     categories: Categorie[]
     setCategories: (newCategories: Categorie[]) => void
     addCategorie: (newCategorie: Categorie) => void;
     updateCategorie: (updatedCategorie: Categorie) => void;
     deleteCategorie: (id: number) => void;
 }
-export const useCategorieStore = create<InterfaceCategorieStore>((set) => ({
+export const useCategoriesStore = create<InterfaceCategoriesStore>((set) => ({
     categories: [],
 
     setCategories: (newCategories) => set({ categories: newCategories }),

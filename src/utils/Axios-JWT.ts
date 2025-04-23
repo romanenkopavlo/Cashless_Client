@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useAuthenticationJWTStore} from "../store/AuthenticationJWT.ts";
+import {useAuthenticationJWTStore} from "../stores/AuthenticationJWT.ts";
 import parameters from "../../public/parameters.json";
 import Token from "../models/Token.ts";
 
@@ -54,6 +54,7 @@ export const AxiosJwt = () => {
                         useAuthenticationJWTStore.getState().setAccessToken(new Token(null));
                         window.location.href = '/login';
                     } else {
+                        alert("L'erreur du serveur.");
                         console.error('Le refresh token a expiré ou autre erreur :', e);
                     }
                 }
