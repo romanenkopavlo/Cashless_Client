@@ -14,6 +14,11 @@ export const styleCustomRole = {
     minWidth: 120
 };
 
+export const styleCustomFilter = {
+    ...baseStyle,
+    minWidth: 200
+};
+
 export const styleCustomInput = {
     ...baseStyle
 };

@@ -46,12 +46,11 @@ export const Statistiques = () => {
     return (
         <>
             <Header/>
-            <div style={{height: "1200px"}}>
-                <div style={{padding: "20px", textAlign: "center"}}>
+                <Box sx={{p: 3, textAlign: "center"}}>
                     <Typography variant="h5" sx={{mt: 1, fontWeight:"bold"}}>
                         Statistiques de ventes
                     </Typography>
-                </div>
+                </Box>
                 {statisticTotal ? (
                         <Box p={4}>
                             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
@@ -110,7 +109,6 @@ export const Statistiques = () => {
                 <Box mt={3}>
                     <StatistiquesVentes/>
                 </Box>
-            </div>
             <Footer/>
         </>
     );

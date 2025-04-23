@@ -37,7 +37,6 @@ export const Profile = () => {
     return (
         <>
             <Header />
-            <div style={{height: "1800px"}}>
             <Container maxWidth="sm" sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
                 <Card sx={{ width: "100%", boxShadow: 6, borderRadius: 3, p: 3, textAlign: "center" }}>
                     <CardContent>
@@ -104,7 +103,7 @@ export const Profile = () => {
                     <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, textAlign: "center" }}>
                         Mes Cartes
                     </Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", mb: 18, gap: 2, justifyContent: "center" }}>
                             {cards.map((card) => (
                                     <CardFestival key={card.id_carte} number={card.numero} balance={card.montant} is_active={card.is_active} id={card.id_carte}/>
                             ))}
@@ -112,7 +111,6 @@ export const Profile = () => {
                 </Container>
             }
             <ModificationProfile open={open} formData={formData}/>
-            </div>
             <Footer />
         </>
     )

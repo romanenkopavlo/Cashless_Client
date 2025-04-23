@@ -92,7 +92,7 @@ export const AddCardForm = ({ setSuccessMessage }: AddCardFormProps) => {
                         <TextFieldCustom
                             {...register("cardNumber", ValidationCard.cardNumber)}
                             onChange={handleChange}
-                            label="Numéro de la carte"
+                            placeholder="Numéro de la carte"
                             variant="outlined"
                             color="secondary"
                             fullWidth

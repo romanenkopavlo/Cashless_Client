@@ -1,4 +1,5 @@
 import {
+    Box,
     Paper,
     Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow,
@@ -11,13 +12,12 @@ export const StatistiquesVentes = () => {
 
     return (
         <>
-            <div style={{height: "1100px"}}>
-                <div style={{padding: "20px", textAlign: "center"}}>
+                <Box sx={{p: 3, textAlign: "center"}}>
                     <Typography variant="h6" sx={{mt: 1, fontWeight: "bold"}}>
                         Points de ventes
                     </Typography>
-                </div>
-                <div style={{padding: "20px"}}>
+                </Box>
+                <Box sx={{p: 3, mb: 15}}>
                     <TableContainer component={Paper}
                                     sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                         <Table sx={{border: "1px solid #ddd"}}>
@@ -69,8 +69,7 @@ export const StatistiquesVentes = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>
-            </div>
+                </Box>
         </>
     )
 }

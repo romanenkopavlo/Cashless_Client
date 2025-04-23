@@ -95,12 +95,11 @@ export const GestionCartes = () => {
     return (
         <>
             <Header/>
-            <div style={{height: "1065px"}}>
-                <div style={{padding: "20px", textAlign: "center"}}>
+                <Box sx={{p: 3, textAlign: "center"}}>
                     <Typography variant="h5" sx={{mt: 1}}>
                         Gestion des cartes
                     </Typography>
-                </div>
+                </Box>
                 <Box display="flex" flexDirection="column" alignItems="center" gap={2} p={2}>
                     <Typography variant="h6">
                         Ajouter des cartes
@@ -131,7 +130,7 @@ export const GestionCartes = () => {
 
                 <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
 
-                <div style={{padding: "20px"}}>
+                <Box sx={{p: 3, mb: 15}}>
                     <TableContainer component={Paper}
                                     sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                         <Table sx={{border: "1px solid #ddd"}}>
@@ -196,9 +195,8 @@ export const GestionCartes = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>
+                </Box>
                 <SnackbarError error={errorSnackbar} setError={setSnackbarError}/>
-            </div>
             <Footer/>
         </>
     );

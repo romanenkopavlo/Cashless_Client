@@ -45,7 +45,7 @@ export const HistoriqueTransaction = () => {
         <>
         <Header/>
             {selectedCard ? (
-                <Container maxWidth="md" sx={{mt: 3, mb: 3}}>
+                <Container maxWidth="md" sx={{mt: 3, mb: 18}}>
                     <Typography variant="h5" sx={{textAlign: "center", mb: 2, fontWeight: "bold"}}>
                         Historique des transactions
                     </Typography>
@@ -55,7 +55,7 @@ export const HistoriqueTransaction = () => {
 
                     {selectedCard.transactions && selectedCard.transactions.length > 0 ? (
                         <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
-                            <Table stickyHeader>
+                            <Table sx={{border: "1px solid #ddd"}}>
                                 <TableHead>
                                     <TableRow sx={{bgcolor: "#f5f5f5"}}>
                                         <TableCell align="center" sx={{fontWeight: "bold", cursor: selectedCard.transactions.length > 1 ? "pointer" : "default"}} onClick={selectedCard.transactions.length > 1 ? () => handleUserSortByDate(selectedCard.id_carte, selectedCard.transactions, sortOrder, setTransactions, setSortOrder) : undefined}>
@@ -93,7 +93,7 @@ export const HistoriqueTransaction = () => {
                     )}
                 </Container>
                 ) : (
-                <Container maxWidth="md" sx={{mt: 3, mb: 3}}>
+                <Container maxWidth="md" sx={{mt: 3, mb: 18}}>
                     <Typography variant="h6" align="center" fontWeight="bold">
                         Carte non trouvée.
                     </Typography>

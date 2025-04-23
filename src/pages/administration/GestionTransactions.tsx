@@ -1,6 +1,7 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
+    Box,
     FormControl, InputLabel, MenuItem,
     Paper, Select, SelectChangeEvent,
     Table,
@@ -20,6 +21,7 @@ import {useVariablesStore} from "../../stores/VariablesStore.ts";
 import {useEffect, useState} from "react";
 import {handleAdminSortByDate} from "../../utils/sortMethods.ts";
 import {updateTransactions} from "../../services/transactions.ts";
+import {styleCustomFilter} from "../../styles/CustomInputField.ts";
 
 export const GestionTransactions = () => {
     const {transactions, setTransactions} = useTransactionsStore();
@@ -62,38 +64,16 @@ export const GestionTransactions = () => {
         }
     };
 
-    const styleCustom = {
-        '& label.Mui-focused': {
-            color: '#2C2C2C',
-        },
-        '& .MuiInput-underline:after': {
-            borderBottomColor: '#7f5656',
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&:hover fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: '#7f5656',
-            },
-        },
-        minWidth: 200
-    }
-
     return (
         <>
             <Header/>
-            <div style={{height: "1100px"}}>
-                <div style={{padding: "20px", textAlign: "center" }}>
+                <Box sx={{p: 3, textAlign: "center" }}>
                     <Typography variant="h5" sx={{ mt: 1 }}>
                         Gestion des transactions
                     </Typography>
-                </div>
-                <div style={{padding: "20px", textAlign: "center"}}>
-                    <FormControl sx={styleCustom}>
+                </Box>
+                <Box sx={{p: 3, textAlign: "center"}}>
+                    <FormControl sx={styleCustomFilter}>
                         <InputLabel>Filtrer par type</InputLabel>
                         <Select
                             value={filterType}
@@ -108,8 +88,8 @@ export const GestionTransactions = () => {
                             <MenuItem value="Annulation de crédit">Annulation de crédit</MenuItem>
                         </Select>
                     </FormControl>
-                </div>
-                <div style={{ padding: "20px" }}>
+                </Box>
+                <Box sx={{ p: 3, mb: 15 }}>
                     <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                         <Table sx={{ border: "1px solid #ddd" }}>
                             <TableHead>
@@ -155,8 +135,7 @@ export const GestionTransactions = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>
-            </div>
+                </Box>
             <Footer/>
         </>
     )

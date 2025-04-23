@@ -1,4 +1,5 @@
 import {
+    Box,
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
     Paper,
     Table,
@@ -21,6 +22,7 @@ import {CreateMarque} from "../../services_REST/serveur/admin/marques/CreateMarq
 import {DeleteMarque} from "../../services_REST/serveur/admin/marques/DeleteMarque.ts";
 import {SuccessMessage} from "../SuccessMessage.tsx";
 import {SnackbarError} from "../SnackbarError.tsx";
+import {styleCustomInput} from "../../styles/CustomInputField.ts";
 
 export const GestionMarques = () => {
     const {marques, addMarque, updateMarque, deleteMarque} = useMarquesStore();
@@ -35,26 +37,6 @@ export const GestionMarques = () => {
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Marque>(new Marque(0, ""));
-
-    const styleCustom = {
-        '& label.Mui-focused': {
-            color: '#2C2C2C',
-        },
-        '& .MuiInput-underline:after': {
-            borderBottomColor: '#7f5656',
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&:hover fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: '#7f5656',
-            },
-        }
-    }
 
     const handleOpen = (editing = false, marque: Marque | null = null) => {
         setIsEditing(editing);
@@ -148,18 +130,18 @@ export const GestionMarques = () => {
 
     return (
         <>
-            <div style={{ padding: "20px", textAlign: "center" }}>
+            <Box sx={{ p: 3, textAlign: "center" }}>
                 <Typography variant="h5" sx={{ mt: 1 }}>
                     Gestion des marques
                 </Typography>
                 <Button variant="contained" onClick={() => handleOpen(false)} style={{ marginTop: "20px", backgroundColor: "#7f5656" }}>
                     Ajouter une marque
                 </Button>
-            </div>
+            </Box>
 
             <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
 
-            <div style={{ padding: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <Box sx={{ p: 3, mb: 15, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <TableContainer component={Paper} sx={{maxHeight: 250, maxWidth: 600, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                     <Table sx={{ border: "1px solid #ddd" }}>
                         <TableHead>
@@ -189,12 +171,12 @@ export const GestionMarques = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </div>
+            </Box>
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>{isEditing ? "Modifier la marque" : "Ajouter une marque"}</DialogTitle>
                 <DialogContent>
-                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Nom" name="nom_marque" value={formData.nom_marque} onChange={handleChange} error={!!nomError} helperText={nomError}/>
+                    <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Nom" name="nom_marque" value={formData.nom_marque} onChange={handleChange} error={!!nomError} helperText={nomError}/>
                     {error && (
                         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                             {error}

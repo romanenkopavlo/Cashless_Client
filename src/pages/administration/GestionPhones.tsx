@@ -1,6 +1,7 @@
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 import {
+    Box,
     Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem,
     Paper, Select, SelectChangeEvent,
     Table,
@@ -26,6 +27,7 @@ import {DeletePhone} from "../../services_REST/serveur/admin/phones/DeletePhone.
 import {SuccessMessage} from "../../components/SuccessMessage.tsx";
 import {SnackbarError} from "../../components/SnackbarError.tsx";
 import {GetMarques} from "../../services_REST/serveur/admin/marques/GetMarques.ts";
+import {styleCustomInput} from "../../styles/CustomInputField.ts";
 
 export const GestionPhones = () => {
     const {phones, setPhones, addPhone, updatePhone, deletePhone} = usePhonesStore();
@@ -74,26 +76,6 @@ export const GestionPhones = () => {
             })();
         }
     }, [isFetchedPhones, setPhones, setIsFetchedPhones, setMarques]);
-
-    const styleCustom = {
-        '& label.Mui-focused': {
-            color: '#2C2C2C',
-        },
-        '& .MuiInput-underline:after': {
-            borderBottomColor: '#7f5656',
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&:hover fieldset': {
-                borderColor: '#7f5656',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: '#7f5656',
-            },
-        }
-    }
 
     const handleOpen = (editing = false, phone: Phone | null = null) => {
         setIsEditing(editing);
@@ -186,8 +168,7 @@ export const GestionPhones = () => {
     return (
         <>
             <Header />
-            <div style={{height: "1200px"}}>
-                <div style={{padding: "20px", textAlign: "center" }}>
+                <Box sx={{ p: 3, textAlign: "center" }}>
                     <Typography variant="h5" sx={{ mt: 1 }}>
                         Gestion des téléphones
                     </Typography>
@@ -198,11 +179,11 @@ export const GestionPhones = () => {
                     ) : (
                         <Typography variant="h6" sx={{ mt: 1 }}>L'ajout d'un téléphone est impossible. Veuillez d'abord ajouter des marques.</Typography>
                     )}
-                </div>
+                </Box>
 
                 <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
 
-                <div style={{ padding: "20px" }}>
+                <Box sx={{ p: 3 }}>
                     <TableContainer component={Paper} sx={{maxHeight: 400, boxShadow: 4, overflow: "auto", borderRadius: 2}}>
                         <Table sx={{ border: "1px solid #ddd" }}>
                             <TableHead>
@@ -234,14 +215,14 @@ export const GestionPhones = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>
+                </Box>
 
                 <GestionMarques/>
 
                 <Dialog open={open} onClose={handleClose}>
                     <DialogTitle>{isEditing ? "Modifier le téléphone" : "Ajouter un téléphone"}</DialogTitle>
                     <DialogContent>
-                        <FormControl fullWidth margin="dense" sx={styleCustom} error={!!marqueError}>
+                        <FormControl fullWidth margin="dense" sx={styleCustomInput} error={!!marqueError}>
                             <InputLabel id="marque-label">Marque</InputLabel>
                             <Select
                                 labelId="marque-label"
@@ -270,7 +251,7 @@ export const GestionPhones = () => {
                                 </Typography>
                             )}
                         </FormControl>
-                        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustom} label="Modèle" name="nom_modele" value={formData.nom_modele} onChange={handleChange} error={!!modeleError} helperText={modeleError}/>
+                        <TextField fullWidth margin="dense" variant="outlined" sx={styleCustomInput} label="Modèle" name="nom_modele" value={formData.nom_modele} onChange={handleChange} error={!!modeleError} helperText={modeleError}/>
                         {error && (
                             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                                 {error}
@@ -284,7 +265,6 @@ export const GestionPhones = () => {
                 </Dialog>
 
                 <SnackbarError error={errorSnackbar} setError={setErrorSnackbar}/>
-            </div>
             <Footer />
         </>
     )
