@@ -98,18 +98,24 @@ export const Profile = () => {
                 </Card>
             </Container>
 
-            {cards && cards.length > 0 &&
+            {cards && cards.length > 0 ? (
                 <Container maxWidth="lg" sx={{ mt: 4 }}>
                     <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, textAlign: "center" }}>
                         Mes Cartes
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", mb: 18, gap: 2, justifyContent: "center" }}>
-                            {cards.map((card) => (
-                                    <CardFestival key={card.id_carte} number={card.numero} balance={card.montant} is_active={card.is_active} id={card.id_carte}/>
-                            ))}
+                        {cards.map((card) => (
+                            <CardFestival key={card.id_carte} number={card.numero} balance={card.montant} is_active={card.is_active} id={card.id_carte}/>
+                        ))}
                     </Box>
                 </Container>
-            }
+                ) : (
+                <Container maxWidth="lg" sx={{ mt: 2, mb: 18 }}>
+                    <Typography variant="h6" fontWeight="bold" sx={{ textAlign: "center", color: "gray", mt: 5 }}>
+                        Vous n’avez actuellement aucune carte associée à votre compte.
+                    </Typography>
+                </Container>
+            )}
             <ModificationProfile open={open} formData={formData}/>
             <Footer />
         </>
