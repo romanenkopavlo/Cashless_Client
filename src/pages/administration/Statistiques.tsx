@@ -25,16 +25,14 @@ export const Statistiques = () => {
 
     const currentDate = formatDate(new Date());
 
-    const colors = ["#4CAF50", "#2196F3", "#9C27B0", "#FF5722"];
+    const colors = ["#4CAF50", "#FF5722", "#9C27B0"];
 
     const statsData = [
-        { title: "Rechargements sur la période", value: `${statisticTotal?.somme_credits} €`,
-            nombre: `${statisticTotal?.credits} rechargements`, sans_ann: `${statisticTotal?.somme_credits_sans_ann} €`, annulations: `${statisticTotal?.annulations_credits} annulations`, somme_ann: `${statisticTotal?.somme_ann_cre} €`, color: colors[0] },
-        { title: "Paiements sur la période", value: `${statisticTotal?.somme_debits} €`,
-            nombre: `${statisticTotal?.debits} paiements`, sans_ann: `${statisticTotal?.somme_debits_sans_ann} €`, annulations: `${statisticTotal?.annulations_debits} annulations`, somme_ann: `${statisticTotal?.somme_ann_deb} €`, color: colors[1] },
-        { title: "Balance sur la période", value: `${statisticTotal?.balance_periode} €`,
-            nombre: "", sans_ann: "", annulations: "", somme_ann: "", color: colors[2] },
-        { title: `Solde au ${currentDate}`, value: `${statisticTotal?.solde} €`, nombre: "", sans_ann: "", annulations: "", somme_ann: "", color: colors[3] },
+        { title: "Revenus : crédits", value: `${statisticTotal?.somme_credits} €`,
+            nombre: `${statisticTotal?.credits} crédits`, sans_ann: `${statisticTotal?.somme_credits_sans_ann} €`, annulations: `${statisticTotal?.annulations_credits} annulations`, somme_ann: `${statisticTotal?.somme_ann_cre} €`, color: colors[0] },
+        { title: "Rechargements des cartes : débits", value: `${statisticTotal?.somme_debits} €`,
+            nombre: `${statisticTotal?.debits} rechargements`, sans_ann: `${statisticTotal?.somme_debits_sans_ann} €`, annulations: `${statisticTotal?.annulations_debits} annulations`, somme_ann: `${statisticTotal?.somme_ann_deb} €`, color: colors[1] },
+        { title: `Solde au ${currentDate}`, value: `${statisticTotal?.solde} €`, nombre: "", sans_ann: "", annulations: "", somme_ann: "", color: colors[2] },
     ];
 
     const pieData = [
